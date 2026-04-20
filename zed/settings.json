@@ -1,0 +1,91 @@
+{
+  "edit_predictions": {
+    "provider": "copilot",
+  },
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+      },
+      "enable_lsp_tasks": true,
+    },
+  },
+  "diff_view_style": "unified",
+  "vim_mode": false,
+  "disable_ai": false,
+  "project_panel": {
+    "dock": "left",
+  },
+  "excerpt_context_lines": 13,
+  "ensure_final_newline_on_save": true,
+  "soft_wrap": "none",
+  "file_finder": {
+    "include_ignored": "smart",
+    "modal_max_width": "large",
+  },
+  "search_wrap": true,
+  "use_smartcase_search": true,
+  "search": {
+    "include_ignored": true,
+    "center_on_match": true,
+    "button": false,
+  },
+  "agent_servers": {},
+  "languages": {
+    "Shell Script": {
+      "show_edit_predictions": true,
+    },
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "agent": {
+    "tool_permissions": {
+      "default": "allow",
+    },
+    "default_model": {
+      "effort": "high",
+      "provider": "copilot_chat",
+      "model": "gpt-5-mini",
+    },
+  },
+  "context_servers": {},
+  "theme": {
+    "mode": "system",
+    "light": "Ayu Light",
+    "dark": "Ayu Mirage",
+  },
+  "experimental.theme_overrides": {
+    "hint": "#199446",
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "ui_font_size": 14,
+  "buffer_font_size": 16,
+  "format_on_save": "on",
+  "confirm_quit": true,
+  "formatter": "auto",
+  "tabs": {
+    "git_status": true,
+  },
+  "always_treat_brackets_as_autoclosed": true,
+  "inlay_hints": {
+    "enabled": false,
+    "edit_debounce_ms": 700,
+  },
+  "tab_bar": {
+    "show_nav_history_buttons": false,
+  },
+  "unnecessary_code_fade": 0.5,
+}
