@@ -70,6 +70,9 @@
       "type": "registry"
     }
   },
+  "file_types": {
+    "Shell Script": ["*.ghostty", "config.ghostty"],
+  },
   "languages": {
     "Shell Script": {
       "show_edit_predictions": true,
