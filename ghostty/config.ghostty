@@ -5,43 +5,24 @@ font-family = JetBrains Mono
 font-size = 15
 window-title-font-family = SF Pro Text
 
-# Ayu Mirage-inspired colors
-background = #151922
-foreground = #e6e7e3
-cursor-color = #ffcc66
-cursor-text = #1b2029
-selection-background = #33415e
-selection-foreground = #d8d9d4
-
-palette = 0=#7a808b
-palette = 1=#f5b0a6
-palette = 2=#8dd5ba
-palette = 3=#fede96
-palette = 4=#96d0e4
-palette = 5=#f3a1a1
-palette = 6=#bbeedc
-palette = 7=#fbfbfb
-palette = 8=#a0a6af
-palette = 9=#f9b3aa
-palette = 10=#91d8be
-palette = 11=#ffe09a
-palette = 12=#9ad4e7
-palette = 13=#f5a4a4
-palette = 14=#bff2df
-palette = 15=#ffffff
+# Theme
+# High-contrast dark themes to try:
+theme = Carbonfox
+# theme = Dracula
+# theme = Gruvbox Dark Hard
+# theme = Catppuccin Mocha
+# theme = One Dark Two
+# theme = ayu-mirage-contrast
 
 # Glass
-background-opacity = 1.0
-background-blur = 28
-alpha-blending = native
-window-colorspace = display-p3
+# background-opacity = 1.0
+# background-blur = 28
+# alpha-blending = native
+# window-colorspace = display-p3
 
 # Window feel
-window-decoration = auto
+# window-decoration = auto
 
-macos-window-buttons = visible
-macos-option-as-alt = left
-macos-icon = glass
 
 # Compact spacing
 window-padding-x = 10
@@ -61,28 +42,15 @@ tab-inherit-working-directory = true
 split-inherit-working-directory = true
 
 # Cursor + interaction
-cursor-style = bar
 cursor-style-blink = true
 cursor-opacity = 0.95
-mouse-hide-while-typing = true
-focus-follows-mouse = true
 copy-on-select = clipboard
-link-previews = true
 
 # Splits
 unfocused-split-opacity = 0.65
 unfocused-split-fill = #090d12
 split-divider-color = #556887
 split-preserve-zoom = navigation
-
-# Search colors
-search-background = #ffcc66
-search-foreground = #1f2430
-search-selected-background = #f28779
-search-selected-foreground = #1f2430
-
-# Bell: polished, not noisy
-bell-features = no-system,attention
 
 # Split-heavy keybinds
 keybind = super+d=new_split:right
