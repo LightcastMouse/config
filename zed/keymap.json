@@ -13,43 +13,33 @@
       "cmd-[": "pane::GoBack",
       "cmd-]": "pane::GoForward",
       "cmd-alt-f": "editor::Format",
-      "cmd-ctrl-c": "workspace::CopyPath",
+      "cmd-shift-c": "workspace::CopyRelativePath",
       "cmd-;": "editor::ToggleInlayHints",
       "cmd-r": "editor::SelectAllMatches",
       "alt-cmd-n": "project_panel::NewDirectory",
       "shift-cmd-g": "git_panel::ToggleFocus",
       "cmd-shift-r": "workspace::ToggleRightDock",
-      "cmd-shift-l": [
-        "task::Spawn",
-        { "task_name": "LazyGit", "reveal_target": "center" },
-      ],
-    },
-  },
-  {
-    "context": "(Editor && mode == full)",
-    "bindings": {
+      "cmd-k cmd-i": "editor::ToggleFoldAll",
+      "cmd-shift-d": "editor::GoToDefinition",
       "cmd-g": "go_to_line::Toggle",
     },
   },
   {
-    "context": "Editor",
-    "bindings": {
-      "cmd-shift-d": "editor::GoToDefinition",
+    "context": "Workspace",
+    "unbind": {
+      "cmd-shift-b": "outline_panel::ToggleFocus",
     },
   },
   {
+    "context": "Workspace",
     "bindings": {
-      "cmd-k cmd-i": "editor::ToggleFoldAll",
+      "cmd-shift-b": "workspace::ToggleRightDock",
     },
   },
   {
-    "bindings": {
-      "cmd-shift-c": "editor::CopyRelativePath"
-    }
+    "context": "Workspace",
+    "unbind": {
+      "alt-cmd-b": "workspace::ToggleRightDock",
+    },
   },
-  {
-    "bindings": {
-      "cmd-shift-c": "editor::CopyRelativePath"
-    }
-  }
 ]

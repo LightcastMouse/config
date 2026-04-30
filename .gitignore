@@ -5,10 +5,12 @@
 !/.gitignore
 
 # Allow traversal into whitelisted directories.
+!/ghostty/
 !/zed/
 !/zed/snippets/
 
 # Whitelisted config files.
+!/ghostty/config.ghostty
 !/zed/keymap.json
 !/zed/settings.json
 !/zed/snippets/snippets.json

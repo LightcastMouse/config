@@ -1,0 +1,103 @@
+# Ghostty: Ayu Mirage glass / compact / split-heavy macOS setup
+
+# Typography
+font-family = JetBrains Mono
+font-size = 15
+window-title-font-family = SF Pro Text
+
+# Ayu Mirage-inspired colors
+background = #181d25
+foreground = #d8d9d4
+cursor-color = #ffcc66
+cursor-text = #1b2029
+selection-background = #33415e
+selection-foreground = #d8d9d4
+
+palette = 0=#585d66
+palette = 1=#f4a59a
+palette = 2=#7ecfb1
+palette = 3=#fed988
+palette = 4=#88cae0
+palette = 5=#f19494
+palette = 6=#b2ecd7
+palette = 7=#fbfbfb
+palette = 8=#8e8e8e
+palette = 9=#f8a99e
+palette = 10=#82d3b5
+palette = 11=#ffdc8c
+palette = 12=#8ccee4
+palette = 13=#f49898
+palette = 14=#b6f0db
+palette = 15=#ffffff
+
+# Glass
+background-opacity = 0.97
+background-blur = 28
+alpha-blending = native
+window-colorspace = display-p3
+
+# Window feel
+window-decoration = auto
+
+macos-window-buttons = visible
+macos-option-as-alt = left
+macos-icon = glass
+
+# Compact spacing
+window-padding-x = 10
+window-padding-y = 8
+
+window-padding-color = extend
+
+# Startup + restore
+window-save-state = always
+window-step-resize = false
+window-new-tab-position = current
+
+# Working-directory behavior
+shell-integration = detect
+window-inherit-working-directory = true
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
+
+# Cursor + interaction
+cursor-style = bar
+cursor-style-blink = true
+cursor-opacity = 0.95
+mouse-hide-while-typing = true
+focus-follows-mouse = true
+copy-on-select = clipboard
+link-previews = true
+
+# Splits
+unfocused-split-opacity = 0.65
+unfocused-split-fill = #090d12
+split-divider-color = #556887
+split-preserve-zoom = navigation
+
+# Search colors
+search-background = #ffcc66
+search-foreground = #1f2430
+search-selected-background = #f28779
+search-selected-foreground = #1f2430
+
+# Bell: polished, not noisy
+bell-features = no-system,attention
+
+# Split-heavy keybinds
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+alt+left=goto_split:left
+keybind = super+alt+right=goto_split:right
+keybind = super+alt+up=goto_split:up
+keybind = super+alt+down=goto_split:down
+keybind = super+enter=toggle_split_zoom
+keybind = super+shift+enter=equalize_splits
+
+# Pane navigation: Cmd+Option+Left/Right
+keybind = super+alt+left=goto_split:left
+keybind = super+alt+right=goto_split:right
+
+# Tab navigation: Cmd+Option+Up/Down
+keybind = super+alt+up=previous_tab
+keybind = super+alt+down=next_tab

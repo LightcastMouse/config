@@ -1,4 +1,15 @@
 {
+  "cli_default_open_behavior": "new_window",
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "git_panel": {
+    "show_count_badge": true,
+    "tree_view": false,
+    "status_style": "label_color",
+    "fallback_branch_name": "master",
+    "dock": "right"
+  },
   "edit_predictions": {
     "provider": "copilot",
   },
@@ -23,7 +34,22 @@
   "vim_mode": false,
   "disable_ai": false,
   "project_panel": {
-    "dock": "left",
+    "hide_hidden": false,
+    "hide_root": true,
+    "diagnostic_badges": true,
+    "git_status_indicator": true,
+    "scrollbar": {
+      "horizontal_scroll": true
+    },
+    "auto_fold_dirs": true,
+    "bold_folder_labels": false,
+    "auto_reveal_entries": true,
+    "file_icons": false,
+    "git_status": true,
+    "folder_icons": false,
+    "indent_size": 6.0,
+    "entry_spacing": "standard",
+    "dock": "right",
   },
   "excerpt_context_lines": 13,
   "ensure_final_newline_on_save": true,
@@ -39,7 +65,11 @@
     "center_on_match": true,
     "button": false,
   },
-  "agent_servers": {},
+  "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    }
+  },
   "languages": {
     "Shell Script": {
       "show_edit_predictions": true,
@@ -49,6 +79,7 @@
     "dock": "right",
   },
   "agent": {
+    "dock": "left",
     "tool_permissions": {
       "default": "allow",
     },
