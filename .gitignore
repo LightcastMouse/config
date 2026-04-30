@@ -6,11 +6,13 @@
 
 # Allow traversal into whitelisted directories.
 !/ghostty/
+!/lazygit/
 !/zed/
 !/zed/snippets/
 
 # Whitelisted config files.
 !/ghostty/config.ghostty
+!/lazygit/config.yml
 !/zed/keymap.json
 !/zed/settings.json
 !/zed/snippets/snippets.json

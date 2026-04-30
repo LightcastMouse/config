@@ -1,0 +1,20 @@
+keybinding:
+  universal:
+    pushFiles: '<disabled>'
+
+customCommands:
+  - key: 'P'
+    context: 'global'
+    description: 'Push current branch to a selected remote'
+    prompts:
+      - type: 'menuFromCommand'
+        title: 'Push current branch to remote'
+        key: 'Remote'
+        command: >-
+          bash -lc 'git remote | python3 -c "import sys; remotes=[line.strip() for line in sys.stdin if line.strip()]; remotes.sort(key=lambda r: (r != \"origin\", r)); print(\"\\n\".join(remotes))"'
+        filter: '^(?P<name>.+)$'
+        valueFormat: '{{ .name }}'
+        labelFormat: '{{ .name }}'
+    command: 'git push {{.Form.Remote}} HEAD:refs/heads/$(git branch --show-current)'
+    loadingText: 'Pushing to {{.Form.Remote}}'
+    output: 'log'
