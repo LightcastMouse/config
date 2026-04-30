@@ -6,32 +6,32 @@ font-size = 15
 window-title-font-family = SF Pro Text
 
 # Ayu Mirage-inspired colors
-background = #181d25
-foreground = #d8d9d4
+background = #151922
+foreground = #e6e7e3
 cursor-color = #ffcc66
 cursor-text = #1b2029
 selection-background = #33415e
 selection-foreground = #d8d9d4
 
-palette = 0=#585d66
-palette = 1=#f4a59a
-palette = 2=#7ecfb1
-palette = 3=#fed988
-palette = 4=#88cae0
-palette = 5=#f19494
-palette = 6=#b2ecd7
+palette = 0=#7a808b
+palette = 1=#f5b0a6
+palette = 2=#8dd5ba
+palette = 3=#fede96
+palette = 4=#96d0e4
+palette = 5=#f3a1a1
+palette = 6=#bbeedc
 palette = 7=#fbfbfb
-palette = 8=#8e8e8e
-palette = 9=#f8a99e
-palette = 10=#82d3b5
-palette = 11=#ffdc8c
-palette = 12=#8ccee4
-palette = 13=#f49898
-palette = 14=#b6f0db
+palette = 8=#a0a6af
+palette = 9=#f9b3aa
+palette = 10=#91d8be
+palette = 11=#ffe09a
+palette = 12=#9ad4e7
+palette = 13=#f5a4a4
+palette = 14=#bff2df
 palette = 15=#ffffff
 
 # Glass
-background-opacity = 0.97
+background-opacity = 1.0
 background-blur = 28
 alpha-blending = native
 window-colorspace = display-p3
