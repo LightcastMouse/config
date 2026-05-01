@@ -16,3 +16,7 @@
 !/zed/keymap.json
 !/zed/settings.json
 !/zed/snippets/snippets.json
+
+# directory to put whitelisted stuff
+!/white/
+!/white/*
