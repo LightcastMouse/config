@@ -14,6 +14,32 @@ customCommands:
         filter: '^(?P<name>.+)$'
         valueFormat: '{{ .name }}'
         labelFormat: '{{ .name }}'
-    command: 'git push {{.Form.Remote}} HEAD:refs/heads/$(git branch --show-current)'
+    command: |
+      sh -c '
+        remote="{{.Form.Remote}}"
+        branch="$(git branch --show-current)"
+
+        if [ -z "$branch" ]; then
+          echo "Not on a branch"
+          exit 1
+        fi
+
+        remote_ref="refs/remotes/$remote/$branch"
+        git fetch "$remote" "refs/heads/$branch:$remote_ref" --quiet >/dev/null 2>&1 || true
+
+        if git show-ref --verify --quiet "$remote_ref"; then
+          set -- $(git rev-list --left-right --count "$remote_ref...HEAD")
+          behind="$1"
+          ahead="$2"
+
+          if [ "$behind" -gt 0 ] && [ "$ahead" -gt 0 ]; then
+            git push --force-with-lease "$remote" "HEAD:refs/heads/$branch"
+          else
+            git push "$remote" "HEAD:refs/heads/$branch"
+          fi
+        else
+          git push "$remote" "HEAD:refs/heads/$branch"
+        fi
+      '
     loadingText: 'Pushing to {{.Form.Remote}}'
     output: 'log'
