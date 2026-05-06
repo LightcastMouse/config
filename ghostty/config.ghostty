@@ -6,23 +6,7 @@ font-size = 15
 window-title-font-family = SF Pro Text
 
 # Theme
-# High-contrast dark themes to try:
 theme = Carbonfox
-# theme = Dracula
-# theme = Gruvbox Dark Hard
-# theme = Catppuccin Mocha
-# theme = One Dark Two
-# theme = ayu-mirage-contrast
-
-# Glass
-# background-opacity = 1.0
-# background-blur = 28
-# alpha-blending = native
-# window-colorspace = display-p3
-
-# Window feel
-# window-decoration = auto
-
 
 # Compact spacing
 window-padding-x = 10
@@ -50,15 +34,10 @@ copy-on-select = clipboard
 unfocused-split-opacity = 0.65
 unfocused-split-fill = #090d12
 split-divider-color = #556887
-split-preserve-zoom = navigation
 
 # Split-heavy keybinds
 keybind = super+d=new_split:right
 keybind = super+shift+d=new_split:down
-keybind = super+alt+left=goto_split:left
-keybind = super+alt+right=goto_split:right
-keybind = super+alt+up=goto_split:up
-keybind = super+alt+down=goto_split:down
 keybind = super+enter=toggle_split_zoom
 keybind = super+shift+enter=equalize_splits
 
