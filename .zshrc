@@ -110,4 +110,7 @@ alias gs='git status'
 alias gp='git pull'
 alias gpu='git push'
 
-export PATH=/opt/homebrew/bin:$PATH
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+# Machine-specific shell config that should not live in this repo.
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

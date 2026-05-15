@@ -83,11 +83,30 @@ link_item() {
   run ln -s "$src" "$dest"
 }
 
+ensure_zed_cli() {
+  if command -v zed >/dev/null 2>&1; then
+    echo "ok: zed CLI found: $(command -v zed)"
+    return
+  fi
+
+  local zed_cli="/Applications/Zed.app/Contents/MacOS/cli"
+  local dest="$HOME/.local/bin/zed"
+
+  if [[ ! -x "$zed_cli" ]]; then
+    echo "skip: Zed CLI source missing: $zed_cli"
+    echo "      Install Zed, then run 'zed: install cli' from Zed or rerun this script."
+    return
+  fi
+
+  link_item "$zed_cli" "$dest"
+}
+
 # Files/directories tracked by this repo and where the apps expect them.
 link_item "$repo_dir/.zshrc" "$HOME/.zshrc"
 link_item "$repo_dir/ghostty" "$config_home/ghostty"
 link_item "$repo_dir/zed" "$config_home/zed"
 link_item "$repo_dir/warp" "$HOME/.warp"
+ensure_zed_cli
 
 # Optional local config directories, if present in this checkout.
 link_item "$repo_dir/blueboard" "$config_home/blueboard"
