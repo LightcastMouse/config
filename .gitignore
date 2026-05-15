@@ -12,3 +12,5 @@
 !/zed/keymap.json
 !/zed/settings.json
 !/zed/snippets/snippets.json
+
+!.zshrc
