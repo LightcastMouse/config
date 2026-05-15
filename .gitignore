@@ -1,22 +1,11 @@
-# Ignore everything by default.
-*
+.jira/*
+blueboard/*
+ghostty/*
+iterm2/*
+github-copilot/*
 
-!/.gitignore
-!/README.md
-!/install-symlinks.sh
-
-!/ghostty/
-!/ghostty/readme.md
-!/ghostty/config.ghostty
-
-!/warp/
-!/warp/keybindings.yaml
-!/warp/settings.toml
-
-!/zed/
-!/zed/snippets/
-!/zed/keymap.json
-!/zed/settings.json
-!/zed/snippets/snippets.json
-
-!.zshrc
+zed/conversations/*
+zed/prompts/*
+zed/prompts-library-db.0.mdb/*
+zed/settings_backup.json
+zed/settings_backup_20250709_144741.json
