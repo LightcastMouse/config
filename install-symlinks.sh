@@ -83,20 +83,14 @@ link_item() {
   run ln -s "$src" "$dest"
 }
 
-install_zshrc_loader() {
+ensure_zshrc_sources_repo() {
   local dest="$HOME/.zshrc"
   local repo_zshrc="$repo_dir/.zshrc"
+  local source_line="source \"$repo_zshrc\""
   local loader
   loader="$(cat <<EOF
-# Managed by $repo_dir/install-symlinks.sh
-# Local shell entrypoint. Shared config lives in the repo.
-
-source "$repo_zshrc"
-
-# Machine-specific shell config that should not live in this repo.
-if [[ -f "\$HOME/.zshrc.local" ]]; then
-  source "\$HOME/.zshrc.local"
-fi
+# Local shell entrypoint. Shared config lives in the config repo.
+$source_line
 EOF
 )"
 
@@ -105,16 +99,16 @@ EOF
     return
   fi
 
-  if [[ -f "$dest" && ! -L "$dest" ]] && cmp -s <(printf '%s\n' "$loader") "$dest"; then
-    echo "ok: zsh loader already installed: $dest"
+  if [[ -f "$dest" && ! -L "$dest" ]] && grep -F "$source_line" "$dest" >/dev/null 2>&1; then
+    echo "ok: zshrc already sources repo config: $dest"
     return
   fi
 
-  if [[ -e "$dest" || -L "$dest" ]]; then
-    if [[ -L "$dest" && "$(readlink "$dest")" == "$repo_zshrc" ]]; then
-      echo "replace: old zsh symlink with loader: $dest"
-      run rm "$dest"
-    elif [[ "$FORCE" == 1 ]]; then
+  if [[ -L "$dest" && "$(readlink "$dest")" == "$repo_zshrc" ]]; then
+    echo "replace: old zsh symlink with local zshrc file: $dest"
+    run rm "$dest"
+  elif [[ -e "$dest" || -L "$dest" ]]; then
+    if [[ "$FORCE" == 1 ]]; then
       echo "remove: $dest"
       run rm -rf "$dest"
     elif [[ "$NO_BACKUP" == 1 ]]; then
@@ -123,7 +117,14 @@ EOF
     else
       local backup="${dest}.backup.${timestamp}"
       echo "backup: $dest -> $backup"
-      run mv "$dest" "$backup"
+      run cp -p "$dest" "$backup"
+      echo "append: repo config source to $dest"
+      if [[ "$DRY_RUN" == 0 ]]; then
+        printf '\n# Shared config from config repo.\n%s\n' "$source_line" >> "$dest"
+      else
+        echo "dry-run: append $source_line to $dest"
+      fi
+      return
     fi
   fi
 
@@ -155,7 +156,7 @@ ensure_zed_cli() {
 }
 
 # Files/directories tracked by this repo and where the apps expect them.
-install_zshrc_loader
+ensure_zshrc_sources_repo
 link_item "$repo_dir/ghostty" "$config_home/ghostty"
 link_item "$repo_dir/zed" "$config_home/zed"
 link_item "$repo_dir/warp" "$HOME/.warp"

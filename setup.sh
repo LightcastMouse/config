@@ -85,5 +85,5 @@ Next steps:
   1. Restart your terminal, or run: source ~/.zshrc
   2. Check Zed with: zed .
 
-If you need machine-specific shell config, put it in ~/.zshrc.local.
+If you need machine-specific shell config, put it in ~/.zshrc
 EOF

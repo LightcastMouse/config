@@ -111,6 +111,73 @@ alias kk='git checkout'
 alias gs='git status'
 alias gp='git pull'
 alias gpu='git push'
+alias gcm='git commit -am'
+alias gb='git branch'
+alias gbd='git branch -D'
 
+# lazygit
+alias lgit='lazygit'
+
+# ssh keys
+alias add-gitlab-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-gitlab >/dev/null 2>&1'
+alias add-github-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-github >/dev/null 2>&1'
+alias add-universal-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519_ssh_key >/dev/null 2>&1'
+
+function add-ssh-keys() {
+  add-gitlab-ssh-key
+  add-github-ssh-key
+  add-universal-ssh-key
+}
+
+if command -v ssh-add >/dev/null 2>&1; then
+  add-ssh-keys
+fi
+
+# paths
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH="$PATH:$HOME/Library/Python/3.9/bin"
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  source "$NVM_DIR/nvm.sh"
+fi
+if [[ -s "$NVM_DIR/bash_completion" ]]; then
+  source "$NVM_DIR/bash_completion"
+fi
+
+# Puppeteer / Chromium
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+if command -v chromium >/dev/null 2>&1; then
+  export PUPPETEER_EXECUTABLE_PATH="$(command -v chromium)"
+fi
+
+# bun completions
+if [[ -s "$HOME/.bun/_bun" ]]; then
+  source "$HOME/.bun/_bun"
+fi
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# deno
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# PostgreSQL, if installed through Homebrew.
+if command -v brew >/dev/null 2>&1 && brew --prefix postgresql@17 >/dev/null 2>&1; then
+  export PATH="$(brew --prefix postgresql@17)/bin:$PATH"
+fi
+
+export EDITOR="zed --wait"
+export VISUAL="zed --wait"
 
