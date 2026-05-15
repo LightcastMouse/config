@@ -7,6 +7,10 @@
 !/ghostty/readme.md
 !/ghostty/config.ghostty
 
+!/warp/
+!/warp/keybindings.yaml
+!/warp/settings.toml
+
 !/zed/
 !/zed/snippets/
 !/zed/keymap.json

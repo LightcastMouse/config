@@ -1,0 +1,9 @@
+---
+"pane_group:navigate_down": none
+"pane_group:navigate_left": alt-shift-cmd-left
+"pane_group:navigate_up": none
+"pane_group:navigate_right": alt-shift-cmd-right
+"workspace:activate_next_tab": alt-cmd-down
+"workspace:activate_prev_tab": alt-cmd-up
+"pane_group:navigate_prev": alt-cmd-left
+"pane_group:navigate_next": alt-cmd-right
