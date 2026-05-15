@@ -91,6 +91,8 @@ function s {
 }
 
 # common commands
+alias co='zed .'
+
 # npm
 alias ni='npm install'
 alias nrd='npm run dev'
@@ -112,5 +114,3 @@ alias gpu='git push'
 
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-# Machine-specific shell config that should not live in this repo.
-[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

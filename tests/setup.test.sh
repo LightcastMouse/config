@@ -19,6 +19,15 @@ assert_symlink_to() {
   [[ "$(readlink "$link")" == "$target" ]] || fail "expected $link -> $target, got $(readlink "$link")"
 }
 
+assert_zshrc_loader_for() {
+  local zshrc="$1"
+  local repo="$2"
+  [[ -f "$zshrc" ]] || fail "expected zsh loader file: $zshrc"
+  [[ ! -L "$zshrc" ]] || fail "expected zsh loader to be a file, not symlink: $zshrc"
+  grep -F "source \"$repo/.zshrc\"" "$zshrc" >/dev/null || fail "expected loader to source repo .zshrc"
+  grep -F 'source "$HOME/.zshrc.local"' "$zshrc" >/dev/null || fail "expected loader to source ~/.zshrc.local"
+}
+
 make_repo() {
   local dest="$1"
   mkdir -p "$dest/ghostty" "$dest/zed/snippets" "$dest/warp"
@@ -42,7 +51,7 @@ test_setup_creates_local_bin_and_installs_symlinks() {
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/setup.sh" >/tmp/setup.out
 
   [[ -d "$home/.local/bin" ]] || fail "expected ~/.local/bin to be created"
-  assert_symlink_to "$home/.zshrc" "$repo/.zshrc"
+  assert_zshrc_loader_for "$home/.zshrc" "$repo"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
   assert_symlink_to "$home/.config/zed" "$repo/zed"
   assert_symlink_to "$home/.warp" "$repo/warp"

@@ -5,7 +5,7 @@ usage() {
   cat <<'EOF'
 Usage: ./install-symlinks.sh [--dry-run] [--force] [--no-backup]
 
-Symlink this config repo into the locations used by each app.
+Install this config repo into the locations used by each app.
 Existing files/directories are backed up by default before being replaced.
 
 Options:
@@ -83,6 +83,59 @@ link_item() {
   run ln -s "$src" "$dest"
 }
 
+install_zshrc_loader() {
+  local dest="$HOME/.zshrc"
+  local repo_zshrc="$repo_dir/.zshrc"
+  local loader
+  loader="$(cat <<EOF
+# Managed by $repo_dir/install-symlinks.sh
+# Local shell entrypoint. Shared config lives in the repo.
+
+source "$repo_zshrc"
+
+# Machine-specific shell config that should not live in this repo.
+if [[ -f "\$HOME/.zshrc.local" ]]; then
+  source "\$HOME/.zshrc.local"
+fi
+EOF
+)"
+
+  if [[ ! -e "$repo_zshrc" ]]; then
+    echo "skip: source missing: $repo_zshrc"
+    return
+  fi
+
+  if [[ -f "$dest" && ! -L "$dest" ]] && cmp -s <(printf '%s\n' "$loader") "$dest"; then
+    echo "ok: zsh loader already installed: $dest"
+    return
+  fi
+
+  if [[ -e "$dest" || -L "$dest" ]]; then
+    if [[ -L "$dest" && "$(readlink "$dest")" == "$repo_zshrc" ]]; then
+      echo "replace: old zsh symlink with loader: $dest"
+      run rm "$dest"
+    elif [[ "$FORCE" == 1 ]]; then
+      echo "remove: $dest"
+      run rm -rf "$dest"
+    elif [[ "$NO_BACKUP" == 1 ]]; then
+      echo "skip: destination exists: $dest"
+      return
+    else
+      local backup="${dest}.backup.${timestamp}"
+      echo "backup: $dest -> $backup"
+      run mv "$dest" "$backup"
+    fi
+  fi
+
+  echo "write: $dest"
+  run mkdir -p "$(dirname "$dest")"
+  if [[ "$DRY_RUN" == 0 ]]; then
+    printf '%s\n' "$loader" > "$dest"
+  else
+    echo "dry-run: write zsh loader to $dest"
+  fi
+}
+
 ensure_zed_cli() {
   if command -v zed >/dev/null 2>&1; then
     echo "ok: zed CLI found: $(command -v zed)"
@@ -102,7 +155,7 @@ ensure_zed_cli() {
 }
 
 # Files/directories tracked by this repo and where the apps expect them.
-link_item "$repo_dir/.zshrc" "$HOME/.zshrc"
+install_zshrc_loader
 link_item "$repo_dir/ghostty" "$config_home/ghostty"
 link_item "$repo_dir/zed" "$config_home/zed"
 link_item "$repo_dir/warp" "$HOME/.warp"

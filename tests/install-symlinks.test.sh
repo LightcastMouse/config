@@ -19,8 +19,13 @@ assert_symlink_to() {
   [[ "$(readlink "$link")" == "$target" ]] || fail "expected $link -> $target, got $(readlink "$link")"
 }
 
-assert_exists() {
-  [[ -e "$1" || -L "$1" ]] || fail "expected path to exist: $1"
+assert_zshrc_loader_for() {
+  local zshrc="$1"
+  local repo="$2"
+  [[ -f "$zshrc" ]] || fail "expected zsh loader file: $zshrc"
+  [[ ! -L "$zshrc" ]] || fail "expected zsh loader to be a file, not symlink: $zshrc"
+  grep -F "source \"$repo/.zshrc\"" "$zshrc" >/dev/null || fail "expected loader to source repo .zshrc"
+  grep -F 'source "$HOME/.zshrc.local"' "$zshrc" >/dev/null || fail "expected loader to source ~/.zshrc.local"
 }
 
 make_repo() {
@@ -47,7 +52,7 @@ test_installs_symlinks() {
 
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" >/tmp/install-symlinks.out
 
-  assert_symlink_to "$home/.zshrc" "$repo/.zshrc"
+  assert_zshrc_loader_for "$home/.zshrc" "$repo"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
   assert_symlink_to "$home/.config/zed" "$repo/zed"
   assert_symlink_to "$home/.warp" "$repo/warp"
@@ -66,7 +71,7 @@ test_backs_up_existing_destinations() {
 
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" >/tmp/install-symlinks-backup.out
 
-  assert_symlink_to "$home/.zshrc" "$repo/.zshrc"
+  assert_zshrc_loader_for "$home/.zshrc" "$repo"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
   compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "expected .zshrc backup"
   compgen -G "$home/.config/ghostty.backup.*" >/dev/null || fail "expected ghostty backup"
@@ -109,8 +114,21 @@ test_force_replaces_existing_destinations() {
 
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" --force >/tmp/install-symlinks-force.out
 
-  assert_symlink_to "$home/.zshrc" "$repo/.zshrc"
+  assert_zshrc_loader_for "$home/.zshrc" "$repo"
   ! compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "--force should not create backup"
+}
+
+test_replaces_old_repo_zshrc_symlink_without_backup() {
+  local repo="$tmp_dir/repo-old-symlink"
+  local home="$tmp_dir/home-old-symlink"
+  make_repo "$repo"
+  mkdir -p "$home"
+  ln -s "$repo/.zshrc" "$home/.zshrc"
+
+  HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" >/tmp/install-symlinks-old-symlink.out
+
+  assert_zshrc_loader_for "$home/.zshrc" "$repo"
+  ! compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "old symlink should not create backup"
 }
 
 for test_name in \
@@ -118,7 +136,8 @@ for test_name in \
   test_backs_up_existing_destinations \
   test_dry_run_does_not_change_files \
   test_no_backup_skips_existing_destinations \
-  test_force_replaces_existing_destinations
+  test_force_replaces_existing_destinations \
+  test_replaces_old_repo_zshrc_symlink_without_backup
  do
   "$test_name"
   echo "ok: $test_name"

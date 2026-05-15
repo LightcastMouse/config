@@ -19,18 +19,21 @@ To preview changes first:
 The setup script creates `~/.local/bin`, checks required commands, and runs `install-symlinks.sh`.
 Existing files/directories are backed up before being replaced with symlinks.
 
-For machine-specific shell setup, put it in `~/.zshrc.local`. The repo-managed `.zshrc` sources that file if it exists.
+The setup script writes a small `~/.zshrc` loader file. That loader sources the repo-managed `~/.config/.zshrc` first, then `~/.zshrc.local` if it exists.
+
+For machine-specific shell setup, put it in `~/.zshrc.local`.
 
 ## Test
 
 ```bash
 ./tests/install-symlinks.test.sh
 ./tests/setup.test.sh
+./tests/zshrc.test.sh
 ```
 
 ## Managed configs
 
-- `~/.zshrc` → `.zshrc`
+- `~/.zshrc` loader file sources `.zshrc` and `~/.zshrc.local`
 - `~/.config/ghostty` → `ghostty/`
 - `~/.config/zed` → `zed/`
 - `~/.local/bin/zed` → `/Applications/Zed.app/Contents/MacOS/cli` when needed
