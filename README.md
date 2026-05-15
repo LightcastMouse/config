@@ -18,6 +18,12 @@ To preview changes first:
 
 The script backs up existing files/directories before replacing them with symlinks.
 
+## Test
+
+```bash
+./tests/install-symlinks.test.sh
+```
+
 ## Managed configs
 
 - `~/.zshrc` → `.zshrc`
