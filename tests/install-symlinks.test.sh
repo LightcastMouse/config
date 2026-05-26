@@ -30,6 +30,7 @@ assert_zshrc_sources_repo() {
 make_repo() {
   local dest="$1"
   mkdir -p "$dest/ghostty" "$dest/zed/snippets" "$dest/warp" "$dest/blueboard" "$dest/github-copilot" "$dest/.jira"
+  printf 'aerospace\n' > "$dest/aerospace.toml"
   cp "$repo_root/install-symlinks.sh" "$dest/install-symlinks.sh"
   chmod +x "$dest/install-symlinks.sh"
   printf 'zshrc\n' > "$dest/.zshrc"
@@ -52,6 +53,7 @@ test_installs_symlinks() {
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" >/tmp/install-symlinks.out
 
   assert_zshrc_sources_repo "$home/.zshrc" "$repo"
+  assert_symlink_to "$home/.aerospace.toml" "$repo/aerospace.toml"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
   assert_symlink_to "$home/.config/zed" "$repo/zed"
   assert_symlink_to "$home/.warp" "$repo/warp"
