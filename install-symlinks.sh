@@ -157,6 +157,7 @@ ensure_zed_cli() {
 
 # Files/directories tracked by this repo and where the apps expect them.
 ensure_zshrc_sources_repo
+link_item "$repo_dir/aerospace.toml" "$HOME/.aerospace.toml"
 link_item "$repo_dir/ghostty" "$config_home/ghostty"
 link_item "$repo_dir/zed" "$config_home/zed"
 link_item "$repo_dir/warp" "$HOME/.warp"

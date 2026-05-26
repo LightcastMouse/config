@@ -32,6 +32,7 @@ The setup script makes sure your local `~/.zshrc` sources the repo-managed `~/.c
 ## Managed configs
 
 - `~/.zshrc` local file sources repo `.zshrc`
+- `~/.aerospace.toml` → `aerospace.toml`
 - `~/.config/ghostty` → `ghostty/`
 - `~/.config/zed` → `zed/`
 - `~/.local/bin/zed` → `/Applications/Zed.app/Contents/MacOS/cli` when needed
