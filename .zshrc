@@ -181,3 +181,12 @@ fi
 export EDITOR="zed --wait"
 export VISUAL="zed --wait"
 
+# Enable colors for ls
+export CLICOLOR=1
+
+# Define colors for different types (directories, links, executables, etc.)
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+# Alias to always use color with common flags
+alias ls='ls -G'
+alias ll='ls -alG'
