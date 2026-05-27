@@ -1,14 +1,14 @@
 {
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "git_panel": {
     "show_count_badge": true,
     "tree_view": false,
     "status_style": "label_color",
     "fallback_branch_name": "master",
-    "dock": "right"
+    "dock": "right",
   },
   "edit_predictions": {
     "provider": "copilot",
@@ -39,7 +39,7 @@
     "diagnostic_badges": true,
     "git_status_indicator": true,
     "scrollbar": {
-      "horizontal_scroll": true
+      "horizontal_scroll": true,
     },
     "auto_fold_dirs": true,
     "bold_folder_labels": false,
@@ -61,14 +61,15 @@
   "search_wrap": true,
   "use_smartcase_search": true,
   "search": {
+    "whole_word": true,
     "include_ignored": true,
     "center_on_match": true,
     "button": false,
   },
   "agent_servers": {
     "codex-acp": {
-      "type": "registry"
-    }
+      "type": "registry",
+    },
   },
   "file_types": {
     "Shell Script": ["*.ghostty", "config.ghostty"],
@@ -122,4 +123,5 @@
     "show_nav_history_buttons": false,
   },
   "unnecessary_code_fade": 0.5,
+  "file_scan_inclusions": ["**/.env*", "/lab/**", "/app/lab/**"],
 }
