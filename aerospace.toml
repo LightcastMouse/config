@@ -75,13 +75,17 @@ on-mode-changed = []
     outer.top =        0
     outer.right =      0
 
+# 1 | S34J55x
+# 2 | Built-in Retina Display
+# 3 | DELL P2418D
 [workspace-to-monitor-force-assignment]
-1 = 'built-in'
-2 = 'dell'
-3 = 's34j55x'
-4 = 'built-in'
-5 = 'built-in'
-6 = 'built-in'
+
+1 = 'Built-in Retina Display'
+2 = 'S34J55x'
+3 = 'DELL P2418D'
+4 = 'Built-in Retina Display'
+5 = 'Built-in Retina Display'
+6 = 'Built-in Retina Display'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
