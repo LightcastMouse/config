@@ -29,7 +29,7 @@ assert_zshrc_sources_repo() {
 
 make_repo() {
   local dest="$1"
-  mkdir -p "$dest/ghostty" "$dest/zed/snippets" "$dest/warp" "$dest/blueboard" "$dest/github-copilot" "$dest/.jira"
+  mkdir -p "$dest/ghostty" "$dest/zed/snippets" "$dest/warp" "$dest/blueboard" "$dest/github-copilot" "$dest/.jira" "$dest/lazygit"
   printf 'aerospace\n' > "$dest/aerospace.toml"
   cp "$repo_root/install-symlinks.sh" "$dest/install-symlinks.sh"
   chmod +x "$dest/install-symlinks.sh"
@@ -42,6 +42,7 @@ make_repo() {
   printf 'blueboard\n' > "$dest/blueboard/settings.json"
   printf 'copilot\n' > "$dest/github-copilot/apps.json"
   printf 'jira\n' > "$dest/.jira/.config.yml"
+  printf 'lazygit\n' > "$dest/lazygit/config.yml"
 }
 
 test_installs_symlinks() {
@@ -60,6 +61,7 @@ test_installs_symlinks() {
   assert_symlink_to "$home/.config/blueboard" "$repo/blueboard"
   assert_symlink_to "$home/.config/github-copilot" "$repo/github-copilot"
   assert_symlink_to "$home/.config/.jira" "$repo/.jira"
+  assert_symlink_to "$home/Library/Application Support/lazygit/config.yml" "$repo/lazygit/config.yml"
 }
 
 test_backs_up_existing_destinations() {
@@ -74,6 +76,7 @@ test_backs_up_existing_destinations() {
 
   assert_zshrc_sources_repo "$home/.zshrc" "$repo"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
+  assert_symlink_to "$home/Library/Application Support/lazygit/config.yml" "$repo/lazygit/config.yml"
   compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "expected .zshrc backup"
   compgen -G "$home/.config/ghostty.backup.*" >/dev/null || fail "expected ghostty backup"
 }
@@ -104,6 +107,7 @@ test_no_backup_skips_existing_destinations() {
   [[ ! -L "$home/.zshrc" ]] || fail "--no-backup should skip existing .zshrc"
   [[ "$(cat "$home/.zshrc")" == "old zshrc" ]] || fail "--no-backup changed .zshrc contents"
   assert_symlink_to "$home/.config/ghostty" "$repo/ghostty"
+  assert_symlink_to "$home/Library/Application Support/lazygit/config.yml" "$repo/lazygit/config.yml"
 }
 
 test_force_replaces_existing_destinations() {
@@ -116,6 +120,7 @@ test_force_replaces_existing_destinations() {
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" --force >/tmp/install-symlinks-force.out
 
   assert_zshrc_sources_repo "$home/.zshrc" "$repo"
+  assert_symlink_to "$home/Library/Application Support/lazygit/config.yml" "$repo/lazygit/config.yml"
   ! compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "--force should not create backup"
 }
 
@@ -129,6 +134,7 @@ test_replaces_old_repo_zshrc_symlink_without_backup() {
   HOME="$home" XDG_CONFIG_HOME="$home/.config" "$repo/install-symlinks.sh" >/tmp/install-symlinks-old-symlink.out
 
   assert_zshrc_sources_repo "$home/.zshrc" "$repo"
+  assert_symlink_to "$home/Library/Application Support/lazygit/config.yml" "$repo/lazygit/config.yml"
   ! compgen -G "$home/.zshrc.backup.*" >/dev/null || fail "old symlink should not create backup"
 }
 

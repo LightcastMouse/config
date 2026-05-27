@@ -37,6 +37,7 @@ The setup script makes sure your local `~/.zshrc` sources the repo-managed `~/.c
 - `~/.config/zed` → `zed/`
 - `~/.local/bin/zed` → `/Applications/Zed.app/Contents/MacOS/cli` when needed
 - `~/.warp` → `warp/`
+- `~/Library/Application Support/lazygit/config.yml` → `lazygit/config.yml`
 - `~/.config/blueboard` → `blueboard/` if present
 - `~/.config/github-copilot` → `github-copilot/` if present
 - `~/.config/.jira` → `.jira/` if present

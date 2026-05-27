@@ -161,6 +161,7 @@ link_item "$repo_dir/aerospace.toml" "$HOME/.aerospace.toml"
 link_item "$repo_dir/ghostty" "$config_home/ghostty"
 link_item "$repo_dir/zed" "$config_home/zed"
 link_item "$repo_dir/warp" "$HOME/.warp"
+link_item "$repo_dir/lazygit/config.yml" "$HOME/Library/Application Support/lazygit/config.yml"
 ensure_zed_cli
 
 # Optional local config directories, if present in this checkout.

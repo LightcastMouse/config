@@ -1,0 +1,18 @@
+customCommands:
+  - key: 'G'
+    context: 'global'
+    description: 'Open PR/MR in browser'
+    command: |
+      sh -c '
+        remote=$(git remote get-url origin 2>/dev/null || true)
+        case "$remote" in
+          *gitlab*|git@gitlab*|https://gitlab*)
+            glab mr view --web ;;
+          *github*|git@github*|https://github*)
+            gh pr view --web ;;
+          *)
+            echo "Unknown origin host: $remote" >&2
+            exit 1 ;;
+        esac
+      '
+    output: terminal
