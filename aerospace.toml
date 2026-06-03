@@ -83,9 +83,10 @@ on-mode-changed = []
 1 = 'Built-in Retina Display'
 2 = 'S34J55x'
 3 = 'DELL P2418D'
-4 = 'Built-in Retina Display'
-5 = 'Built-in Retina Display'
+4 = 'S34J55x'
+5 = 'DELL P2418D'
 6 = 'Built-in Retina Display'
+7 = 'Built-in Retina Display'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -209,15 +210,23 @@ on-mode-changed = []
     # alt-shift-z = 'move-node-to-workspace Z'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
-    alt-tab = 'workspace-back-and-forth'
+    # alt-tab = 'workspace-back-and-forth'
+    ctrl-alt-shift-tab = 'workspace-back-and-forth'
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
     alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
     # Monitor cycling / workspace shuttle
     ctrl-alt-left = 'focus-monitor prev'
     ctrl-alt-right = 'focus-monitor next'
-    ctrl-alt-shift-left = 'move-workspace-to-monitor --wrap-around prev'
-    ctrl-alt-shift-right = 'move-workspace-to-monitor --wrap-around next'
+    # ctrl-alt-shift-left = 'move-workspace-to-monitor --wrap-around prev'
+    # ctrl-alt-shift-right = 'move-workspace-to-monitor --wrap-around next'
+    # ctrl-alt-shift-right = 'aerospace workspace --wrap-around next'
+    # ctrl-alt-shift-right = 'workspace --wrap-around next'
+    # ctrl-alt-shift-left = 'workspace --wrap-around prev'
+
+    alt-tab = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
+    # ctrl-alt-shift-right = 'focus dfs-next'
+    # ctrl-alt-shift-left = 'focus dfs-prev'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
