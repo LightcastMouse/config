@@ -106,6 +106,8 @@ alias bb='bun build'
 alias bl='bun lint'
 alias bc='bun check'
 
+alias ttdev='bun "$HOME/.config/tt/dev.ts"'
+
 # git
 alias kk='git checkout'
 alias gs='git status'
