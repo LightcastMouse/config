@@ -51,7 +51,7 @@
     "entry_spacing": "standard",
     "dock": "right",
   },
-  "excerpt_context_lines": 13,
+  // "excerpt_context_lines": 3,
   "ensure_final_newline_on_save": true,
   "soft_wrap": "none",
   "file_finder": {
@@ -59,10 +59,10 @@
     "modal_max_width": "large",
   },
   "search_wrap": true,
-  "use_smartcase_search": true,
+  "use_smartcase_search": false,
   "search": {
-    "whole_word": true,
-    "include_ignored": true,
+    "whole_word": false,
+    "include_ignored": false,
     "center_on_match": true,
     "button": false,
   },
@@ -124,4 +124,5 @@
   },
   "unnecessary_code_fade": 0.5,
   "file_scan_inclusions": ["**/.env*", "/lab/**", "/app/lab/**"],
+  "file_scan_exclusions": ["**/node_modules/**"],
 }
