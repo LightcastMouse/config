@@ -192,3 +192,110 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 # Alias to always use color with common flags
 alias ls='ls -G'
 alias ll='ls -alG'
+
+export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
+
+function warp_prune_interactive {
+  : "${WARP_DB:?set WARP_DB first}"
+  command -v fzf >/dev/null || { echo 'missing: fzf' >&2; return 1; }
+
+  local src_file sel_file
+  src_file="$(mktemp)" || return 1
+  sel_file="$(mktemp)" || { rm -f "$src_file"; return 1; }
+
+  python3 - "$WARP_DB" > "$src_file" <<'PY'
+import re, sqlite3, sys
+
+conn = sqlite3.connect(sys.argv[1])
+cur = conn.cursor()
+queries = [
+    ("commands", "id", "coalesce(start_ts, '')", "command"),
+    ("ai_queries", "id", "coalesce(start_ts, '')", "input"),
+    ("agent_conversations", "id", "coalesce(last_modified_at, '')", "conversation_data"),
+]
+
+def squish(text):
+    return re.sub(r"\s+", " ", text or "").strip()
+
+for table, id_col, ts_expr, text_col in queries:
+    sql = f"select {id_col}, {ts_expr}, {text_col} from {table} order by {id_col} desc"
+    for row_id, ts, text in cur.execute(sql):
+        full = squish(text)
+        preview = full[:140] + ("..." if len(full) > 140 else "")
+        print(f"{table}\t{row_id}\t{ts[:19]}\t{preview}")
+PY
+
+  fzf --multi --layout=reverse --delimiter=$'\t' --with-nth=1,3,4 \
+    --bind 'space:toggle,ctrl-a:select-all' \
+    --preview 'printf "%s\n" {4}' \
+    --preview-window='wrap' \
+    < "$src_file" > "$sel_file" || {
+      rm -f "$src_file" "$sel_file"
+      return 1
+    }
+
+  python3 - "$WARP_DB" "$sel_file" "${HISTFILE:-$HOME/.zsh_history}" <<'PY'
+import shutil, sqlite3, sys
+
+DB = sys.argv[1]
+SEL = sys.argv[2]
+HISTFILE = sys.argv[3]
+
+with open(SEL) as f:
+    rows = [line.rstrip("\n").split("\t", 3) for line in f if line.strip()]
+
+if not rows:
+    raise SystemExit(0)
+
+backup = DB + ".bak"
+shutil.copy2(DB, backup)
+print(f"db backup: {backup}")
+
+by_table = {}
+for table, row_id, *_ in rows:
+    by_table.setdefault(table, []).append(int(row_id))
+
+conn = sqlite3.connect(DB)
+cur = conn.cursor()
+
+selected_commands = set()
+command_ids = by_table.get("commands", [])
+if command_ids:
+    placeholders = ",".join("?" for _ in command_ids)
+    for (command,) in cur.execute(f'SELECT command FROM "commands" WHERE id IN ({placeholders})', command_ids):
+        selected_commands.add(command)
+
+for table, ids in by_table.items():
+    placeholders = ",".join("?" for _ in ids)
+    cur.execute(f'DELETE FROM "{table}" WHERE id IN ({placeholders})', ids)
+    print(f'{table}: deleted {cur.rowcount} rows')
+
+conn.commit()
+cur.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+cur.execute("VACUUM;")
+conn.close()
+
+if selected_commands:
+    hist_backup = HISTFILE + ".bak"
+    shutil.copy2(HISTFILE, hist_backup)
+    print(f"zsh history backup: {hist_backup}")
+
+    removed = 0
+    kept = []
+    with open(HISTFILE, "r", encoding="utf-8", errors="surrogateescape") as f:
+        for line in f:
+            payload = line.split(";", 1)[1] if ";" in line else line
+            payload = payload.rstrip("\n")
+            if payload in selected_commands:
+                removed += 1
+                continue
+            kept.append(line)
+
+    with open(HISTFILE, "w", encoding="utf-8", errors="surrogateescape") as f:
+        f.writelines(kept)
+
+    print(f'zsh_history: deleted {removed} rows')
+PY
+
+  rm -f "$src_file" "$sel_file"
+}
