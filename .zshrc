@@ -120,6 +120,10 @@ alias gbd='git branch -D'
 # lazygit
 alias lgit='lazygit'
 
+# TT Postgres
+alias cleanuppg="~/d/talent-transform/lab/db/setup-local-postgres.sh --cleanup"
+alias resetpg="~/d/talent-transform/lab/db/setup-local-postgres.sh --reset"
+
 # ssh keys
 alias add-gitlab-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-gitlab >/dev/null 2>&1'
 alias add-github-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-github >/dev/null 2>&1'
