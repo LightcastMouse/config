@@ -21,7 +21,7 @@ spacing = "compact"
 
 [appearance.window]
 override_opacity = 100
-zoom_level = 110
+zoom_level = 100
 open_windows_at_custom_size = false
 override_blur = 64
 left_panel_visibility_across_tabs = true
@@ -117,6 +117,7 @@ show_warning_before_quitting = false
 grace_period = 60
 
 [notifications]
+toast_duration_secs = 8
 
 [notifications.preferences]
 is_agent_task_completed_enabled = true
