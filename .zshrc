@@ -193,10 +193,6 @@ export CLICOLOR=1
 # Define colors for different types (directories, links, executables, etc.)
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 
-# Alias to always use color with common flags
-alias ls='ls -G'
-alias ll='ls -alG'
-
 export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
 
 function warp_prune_interactive {
