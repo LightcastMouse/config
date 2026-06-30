@@ -101,10 +101,11 @@ alias nrb='npm run build'
 alias nrl='npm run lint'
 # bun
 alias bi='bun install'
-alias bd='bun dev'
-alias bb='bun build'
-alias bl='bun lint'
-alias bc='bun check'
+alias brb='bun run build'
+alias brl='bun run lint'
+alias brc='bun run check'
+alias brt='bun run test'
+alias brd='bun run dev'
 
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
 
