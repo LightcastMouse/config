@@ -1,18 +1,41 @@
 customCommands:
   - key: 'G'
-    context: 'global'
+    context: 'localBranches'
     description: 'Open PR/MR in browser'
     command: |
       sh -c '
+        branch='{{.SelectedLocalBranch.Name}}'
         remote=$(git remote get-url origin 2>/dev/null || true)
+
         case "$remote" in
-          *gitlab*|git@gitlab*|https://gitlab*)
-            glab mr view --web ;;
-          *github*|git@github*|https://github*)
-            gh pr view --web ;;
+          *gitlab*)
+            glab mr view "$branch" --web ;;
+          *github*)
+            gh pr view "$branch" --web ;;
           *)
             echo "Unknown origin host: $remote" >&2
             exit 1 ;;
         esac
       '
-    output: terminal
+    output: none
+
+  - key: 'o'
+    context: 'localBranches'
+    description: 'Create PR/MR in browser'
+    command: |
+      sh -c '
+        branch='{{.SelectedLocalBranch.Name}}'
+        remote=$(git remote get-url origin 2>/dev/null || true)
+        url=$(python3 -c "import re, sys, urllib.parse; remote=sys.argv[1]; branch=sys.argv[2]; encoded=urllib.parse.quote(branch, safe=\"\"); target=urllib.parse.quote(\"master\", safe=\"\"); m=re.match(r\"git@([^:]+):(.+?)(?:\\\\.git)?$\", remote) or re.match(r\"https?://([^/]+)/(.+?)(?:\\\\.git)?$\", remote); assert m; host, path = m.groups(); path = re.sub(r\"\\.git$\", \"\", path); print(f\"https://{host}/{path}/-/merge_requests/new?merge_request%5Bsource_branch%5D={encoded}&merge_request%5Btarget_branch%5D={target}\" if \"gitlab\" in remote else f\"https://{host}/{path}/compare/master...{encoded}?expand=1\" if \"github\" in remote else (_ for _ in ()).throw(SystemExit(2)))" "$remote" "$branch") || {
+          echo "Unknown origin host: $remote" >&2
+          exit 1
+        }
+
+        open "$url"
+      '
+    output: none
+
+keybinding:
+  branches:
+    createPullRequest: <disabled>
+    openPullRequestInBrowser: <disabled>
