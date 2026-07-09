@@ -106,6 +106,7 @@ alias brl='bun run lint'
 alias brc='bun run check'
 alias brt='bun run test'
 alias brd='bun run dev'
+alias brdb='bun run db'
 
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
 
