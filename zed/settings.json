@@ -55,7 +55,7 @@
   "ensure_final_newline_on_save": true,
   "soft_wrap": "none",
   "file_finder": {
-    "include_ignored": "smart",
+    "include_ignored": "all",
     "modal_max_width": "large",
   },
   "search_wrap": true,
