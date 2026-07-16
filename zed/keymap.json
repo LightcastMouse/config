@@ -20,6 +20,7 @@
       "shift-cmd-g": "git_panel::ToggleFocus",
       "cmd-shift-r": "workspace::ToggleRightDock",
       "cmd-k cmd-i": "editor::ToggleFoldAll",
+      "cmd-k v": "markdown::OpenPreview",
       "cmd-shift-d": "editor::GoToDefinition",
       "cmd-g": "go_to_line::Toggle",
     },
