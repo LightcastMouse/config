@@ -93,6 +93,50 @@ function s {
 # common commands
 alias co='zed .'
 
+# Open three Warp tabs named "[$1] lgit", "[$1] pi", and "[$1] dev".
+function warp-tabs() {
+  if [[ $# -ne 1 || ! "$1" =~ '^[[:alnum:]_-]+$' ]]; then
+    echo 'usage: warp-tabs <ticket>' >&2
+    return 2
+  fi
+
+  osascript <<'APPLESCRIPT'
+tell application "Warp" to activate
+tell application "System Events"
+  repeat 3 times
+    keystroke "t" using {command down}
+    delay 1
+  end repeat
+end tell
+APPLESCRIPT
+
+  python3 - "$WARP_DB" "$1" <<'PY'
+import sqlite3
+import sys
+import time
+
+titles = [f"[{sys.argv[2]}] {name}" for name in ("dev", "pi", "lgit")]
+for _ in range(10):
+    try:
+        with sqlite3.connect(sys.argv[1], timeout=1) as db:
+            tab_ids = [row[0] for row in db.execute(
+                "SELECT id FROM tabs ORDER BY id DESC LIMIT 3"
+            )]
+            if len(tab_ids) != 3:
+                raise RuntimeError("could not find three new Warp tabs")
+            db.executemany(
+                "UPDATE tabs SET custom_title = ? WHERE id = ?",
+                zip(titles, tab_ids),
+            )
+        break
+    except sqlite3.OperationalError:
+        time.sleep(0.2)
+else:
+    raise SystemExit("could not update Warp tab titles")
+PY
+}
+alias wt='warp-tabs'
+
 # npm
 alias ni='npm install'
 alias nrd='npm run dev'
@@ -194,6 +238,29 @@ export CLICOLOR=1
 
 # Define colors for different types (directories, links, executables, etc.)
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+# Prefer selected global skills over conflicting project skills.
+pi() {
+  local global="$HOME/.agents/skills"
+  local repo_root
+  local args=(--no-skills)
+
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+
+  for skill in tt-glab tt-jira-fst tt-kysely tt-remove-feature-flag; do
+    [[ -d "$global/$skill" ]] && args+=(--skill "$global/$skill")
+  done
+
+  if [[ -n "$repo_root" ]]; then
+    [[ -d "$repo_root/.pi/skills" ]] && args+=(--skill "$repo_root/.pi/skills")
+    [[ -d "$repo_root/.agents/skills" ]] && args+=(--skill "$repo_root/.agents/skills")
+  fi
+
+  # Load other global skills after the selected overrides.
+  args+=(--skill "$global")
+
+  command pi "${args[@]}" "$@"
+}
 
 export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
 
