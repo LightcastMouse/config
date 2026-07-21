@@ -241,6 +241,14 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 
 # Prefer selected global skills over conflicting project skills.
 pi() {
+  # Package-manager commands must receive untouched arguments.
+  case "${1-}" in
+    update|install|remove|uninstall|list|config)
+      command pi "$@"
+      return
+      ;;
+  esac
+
   local global="$HOME/.agents/skills"
   local repo_root
   local args=(--no-skills)
