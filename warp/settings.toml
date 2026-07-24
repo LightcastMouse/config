@@ -27,7 +27,8 @@ override_blur = 64
 left_panel_visibility_across_tabs = true
 
 [appearance.blocks]
-show_jump_to_bottom_of_block_button = true
+show_jump_to_bottom_of_block_button = false
+show_block_dividers = false
 
 [appearance.vertical_tabs]
 display_granularity = "tabs"
@@ -99,6 +100,7 @@ show_global_workflows_in_universal_search = false
 
 [terminal]
 use_audible_bell = false
+show_terminal_zero_state_block = false
 
 [terminal.input]
 input_box_type_setting = "classic"
