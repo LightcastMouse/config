@@ -153,6 +153,7 @@ alias brd='bun run dev'
 alias brdb='bun run db'
 
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
+alias tttest="DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun db && DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun test"
 
 # git
 alias kk='git checkout'
