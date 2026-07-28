@@ -303,7 +303,8 @@ for table, id_col, ts_expr, text_col in queries:
 PY
 
   fzf --multi --layout=reverse --delimiter=$'\t' --with-nth=1,3,4 \
-    --bind 'space:toggle,ctrl-a:select-all' \
+    --header='ctrl-a/alt-a: select all · space: toggle' \
+    --bind 'space:toggle,ctrl-a:select-all,alt-a:select-all' \
     --preview 'printf "%s\n" {4}' \
     --preview-window='wrap' \
     < "$src_file" > "$sel_file" || {
