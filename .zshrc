@@ -240,6 +240,8 @@ export CLICOLOR=1
 # Define colors for different types (directories, links, executables, etc.)
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 
+alias cafpi='caffeinate -s -i -u pi'
+
 # Prefer selected global skills over conflicting project skills.
 pi() {
   # Package-manager commands must receive untouched arguments.
