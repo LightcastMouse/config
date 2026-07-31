@@ -93,6 +93,14 @@ function s {
 # common commands
 alias co='zed .'
 
+function findPortPID() {
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN
+}
+
+function killPID() {
+  kill "$1"
+}
+
 # Open three Warp tabs named "[$1] lgit", "[$1] pi", and "[$1] dev".
 function warp-tabs() {
   if [[ $# -ne 1 || ! "$1" =~ '^[[:alnum:]_-]+$' ]]; then
@@ -170,6 +178,8 @@ alias lgit='lazygit'
 # TT Postgres
 alias cleanuppg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
 alias resetpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
+alias cpg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
+alias rpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
 
 # ssh keys
 alias add-gitlab-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-gitlab >/dev/null 2>&1'
