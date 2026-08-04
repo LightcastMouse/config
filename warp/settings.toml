@@ -11,6 +11,25 @@ is_any_ai_enabled = true
 [agents.warp_agent.input]
 nld_in_terminal_enabled = false
 ai_auto_detection_enabled = false
+show_agent_tips = true
+
+[agents.warp_agent.input.agent_toolbar_chip_selection_setting]
+
+[agents.warp_agent.input.agent_toolbar_chip_selection_setting.custom]
+left = [{ context_chip = "shell_git_branch" }, { context_chip = "git_diff_stats" }]
+right = []
+
+[agents.warp_agent.active_ai]
+agent_mode_query_suggestions_enabled = false
+code_suggestions_enabled = true
+git_operations_autogen_enabled = false
+
+[agents.warp_agent.other]
+agent_attribution_enabled = false
+should_show_oz_updates_in_zero_state = false
+should_render_use_agent_toolbar_for_user_commands = false
+thinking_display_mode = "never_show"
+orchestration_message_display_mode = "always_collapse"
 
 [agents.profiles]
 agent_mode_coding_permissions = "always_allow_reading"
@@ -109,6 +128,7 @@ honor_ps1 = true
 alias_expansion_enabled = true
 command_corrections = true
 completions_open_while_typing = false
+at_context_menu_in_terminal_mode = false
 
 [general]
 snackbar_enabled = true
@@ -138,6 +158,9 @@ agent_mode_codebase_context_auto_indexing = true
 
 [code.editor]
 open_file_editor = { external_editor = "zed" }
+auto_open_code_review_pane_on_first_agent_change = true
+show_global_search = false
+format_on_save = true
 
 [accessibility]
 accessibility_verbosity = "concise"
