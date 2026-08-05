@@ -101,6 +101,23 @@ function killPID() {
   kill "$1"
 }
 
+function freePort() {
+  if [[ $# -ne 1 || ! "$1" =~ '^[0-9]+$' || "$1" -lt 1 || "$1" -gt 65535 ]]; then
+    echo 'usage: freePort <port>' >&2
+    return 2
+  fi
+
+  local pids
+  pids=(${(@f)$(lsof -tiTCP:"$1" -sTCP:LISTEN)})
+
+  if (( ${#pids[@]} == 0 )); then
+    echo "No process listening on port $1"
+    return 1
+  fi
+
+  kill "${pids[@]}"
+}
+
 # Open three Warp tabs named "[$1] lgit", "[$1] pi", and "[$1] dev".
 function warp-tabs() {
   if [[ $# -ne 1 || ! "$1" =~ '^[[:alnum:]_-]+$' ]]; then
