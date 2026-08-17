@@ -7,10 +7,13 @@ clean_repo_dir_color=220
 staged_repo_dir_color=108
 unstaged_repo_dir_color=203
 
+## prompt
+# escape path for PS1 (ahelp-blacklist-me)
 function _prompt_escape_path {
   print -r -- "${1//\%/%%}"
 }
 
+# git dir prompt color (ahelp-blacklist-me)
 function _git_dir_prompt_color {
   command git rev-parse --is-inside-work-tree &>/dev/null || {
     print -r -- $default_dir_color
@@ -31,6 +34,7 @@ function _git_dir_prompt_color {
   fi
 }
 
+# git dir prompt segment (ahelp-blacklist-me)
 function _git_dir_prompt {
   command git rev-parse --is-inside-work-tree &>/dev/null || {
     print -r -- "%F{$default_dir_color}%~%f"
@@ -61,6 +65,7 @@ function _git_dir_prompt {
   print -r -- "%F{$above_repo_dir_color}$(_prompt_escape_path "$prefix")%f%F{$dir_color}$(_prompt_escape_path "$repo_path")%f"
 }
 
+# set PS1 (ahelp-blacklist-me)
 function _set_prompt {
   local last_status=$?
   local dir_prompt="$(_git_dir_prompt)"
@@ -79,6 +84,7 @@ function _set_prompt {
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _set_prompt
 
+## shell
 # source .zshrc
 function s {
   if [[ $1 = "z" ]]; then
@@ -90,17 +96,79 @@ function s {
   fi
 }
 
-# common commands
+# list all aliases/funcs, ordered by last used
+# tag a preceding comment with (ahelp-blacklist-me) to hide that entry
+function ahelp() {
+  local cfg="$HOME/.config/.zshrc"
+  local db="${WARP_DB:-$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite}"
+
+  sqlite3 -separator $'\t' "$db" "
+    SELECT strftime('%s', start_ts), command
+    FROM commands
+    WHERE command IS NOT NULL AND command != ''
+  " 2>/dev/null | awk -F'\t' -v cfg="$cfg" '
+    FNR==NR {
+      ts = $1
+      cmd = $2
+      sub(/^[\r\n\t \x01-\x1f]+/, "", cmd)
+      split(cmd, parts, /[ \t]+/)
+      name = parts[1]
+      if (name != "" && (ts+0) > (last[name]+0)) last[name] = ts
+      next
+    }
+    {
+      if ($0 ~ /^## /) { next }
+      if ($0 ~ /^# /)  { c = $0; sub(/^# */, "", c); next }
+      if ($0 ~ /^alias [a-zA-Z0-9_-]+=/) {
+        name = $0; sub(/^alias /, "", name); sub(/=.*/, "", name)
+        emit(name); next
+      }
+      if ($0 ~ /^function [a-zA-Z0-9_-]+/) {
+        name = $0; sub(/^function /, "", name); sub(/[ (].*/, "", name)
+        emit(name); next
+      }
+      if ($0 ~ /^[a-zA-Z_][a-zA-Z0-9_-]*\(\)/) {
+        name = $0; sub(/\(\).*/, "", name)
+        emit(name); next
+      }
+    }
+    function emit(name) {
+      if (c ~ /\(ahelp-blacklist-me\)/) { c = ""; return }
+      t = last[name] + 0
+      nrows++; rowt[nrows] = t; rowname[nrows] = name; rowc[nrows] = c
+      c = ""
+    }
+    END {
+      for (i = 1; i <= nrows; i++) {
+        print rowt[i] "\t" rowname[i] "\t" rowc[i]
+      }
+    }
+  ' - "$cfg" | sort -t $'\t' -k1,1nr | while IFS=$'\t' read -r ts name cmt; do
+    if [[ "$ts" == "0" ]]; then
+      d="never"
+    else
+      d="$(date -r "$ts" +%Y-%m-%d)"
+    fi
+    printf "%-22s %-30s %s\n" "$name" "$cmt" "$d"
+  done
+}
+
+## editor
+# open cwd in Zed
 alias co='zed .'
 
+## network
+# find PID on port
 function findPortPID() {
   lsof -nP -iTCP:"$1" -sTCP:LISTEN
 }
 
+# kill a PID
 function killPID() {
   kill "$1"
 }
 
+# kill process on port
 function freePort() {
   if [[ $# -ne 1 || ! "$1" =~ '^[0-9]+$' || "$1" -lt 1 || "$1" -gt 65535 ]]; then
     echo 'usage: freePort <port>' >&2
@@ -118,7 +186,10 @@ function freePort() {
   kill "${pids[@]}"
 }
 
-# Open three Warp tabs named "[$1] lgit", "[$1] pi", and "[$1] dev".
+## warp
+export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
+
+# open 3 Warp tabs
 function warp-tabs() {
   if [[ $# -ne 1 || ! "$1" =~ '^[[:alnum:]_-]+$' ]]; then
     echo 'usage: warp-tabs <ticket>' >&2
@@ -160,148 +231,10 @@ else:
     raise SystemExit("could not update Warp tab titles")
 PY
 }
+# open 3 Warp tabs
 alias wt='warp-tabs'
 
-# npm
-alias ni='npm install'
-alias nrd='npm run dev'
-alias nra='npm run app'
-alias nrb='npm run build'
-alias nrl='npm run lint'
-# bun
-alias bi='bun install'
-alias brb='bun run build'
-alias brl='bun run lint'
-alias brc='bun run check'
-alias brt='bun run test'
-alias brd='bun run dev'
-alias brdb='bun run db'
-
-alias ttdev='bun "$HOME/.config/tt/dev.ts"'
-alias tttest="DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun db && DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun test"
-
-# git
-alias kk='git checkout'
-alias gs='git status'
-alias gp='git pull'
-alias gpu='git push'
-alias gcm='git commit -am'
-alias gb='git branch'
-alias gbd='git branch -D'
-
-# lazygit
-alias lgit='lazygit'
-
-# TT Postgres
-alias cleanuppg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
-alias resetpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
-alias cpg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
-alias rpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
-
-# ssh keys
-alias add-gitlab-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-gitlab >/dev/null 2>&1'
-alias add-github-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-github >/dev/null 2>&1'
-alias add-universal-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519_ssh_key >/dev/null 2>&1'
-
-function add-ssh-keys() {
-  add-gitlab-ssh-key
-  add-github-ssh-key
-  add-universal-ssh-key
-}
-
-if command -v ssh-add >/dev/null 2>&1; then
-  add-ssh-keys
-fi
-
-# paths
-export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
-export PATH="$PATH:$HOME/Library/Python/3.9/bin"
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-  source "$NVM_DIR/nvm.sh"
-fi
-if [[ -s "$NVM_DIR/bash_completion" ]]; then
-  source "$NVM_DIR/bash_completion"
-fi
-
-# Puppeteer / Chromium
-export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-if command -v chromium >/dev/null 2>&1; then
-  export PUPPETEER_EXECUTABLE_PATH="$(command -v chromium)"
-fi
-
-# bun completions
-if [[ -s "$HOME/.bun/_bun" ]]; then
-  source "$HOME/.bun/_bun"
-fi
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# deno
-export DENO_INSTALL="$HOME/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
-
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# PostgreSQL, if installed through Homebrew.
-if command -v brew >/dev/null 2>&1 && brew --prefix postgresql@17 >/dev/null 2>&1; then
-  export PATH="$(brew --prefix postgresql@17)/bin:$PATH"
-fi
-
-export EDITOR="zed --wait"
-export VISUAL="zed --wait"
-
-# Enable colors for ls
-export CLICOLOR=1
-
-# Define colors for different types (directories, links, executables, etc.)
-export LSCOLORS="Gxfxcxdxbxegedabagacad"
-
-alias cafpi='caffeinate -s -i -u pi'
-
-# Prefer selected global skills over conflicting project skills.
-pi() {
-  # Package-manager commands must receive untouched arguments.
-  case "${1-}" in
-    update|install|remove|uninstall|list|config)
-      command pi "$@"
-      return
-      ;;
-  esac
-
-  local global="$HOME/.agents/skills"
-  local repo_root
-  local args=(--no-skills)
-
-  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-
-  for skill in tt-glab tt-jira-fst tt-kysely tt-remove-feature-flag; do
-    [[ -d "$global/$skill" ]] && args+=(--skill "$global/$skill")
-  done
-
-  if [[ -n "$repo_root" ]]; then
-    [[ -d "$repo_root/.pi/skills" ]] && args+=(--skill "$repo_root/.pi/skills")
-    [[ -d "$repo_root/.agents/skills" ]] && args+=(--skill "$repo_root/.agents/skills")
-  fi
-
-  # Load other global skills after the selected overrides.
-  args+=(--skill "$global")
-
-  command pi "${args[@]}" "$@"
-}
-
-export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
-
+# prune Warp history
 function warp_prune_interactive {
   : "${WARP_DB:?set WARP_DB first}"
   command -v fzf >/dev/null || { echo 'missing: fzf' >&2; return 1; }
@@ -407,3 +340,189 @@ PY
 
   rm -f "$src_file" "$sel_file"
 }
+
+## npm
+# npm install
+alias ni='npm install'
+# npm run dev
+alias nrd='npm run dev'
+# npm run app
+alias nra='npm run app'
+# npm run build
+alias nrb='npm run build'
+# npm run lint
+alias nrl='npm run lint'
+
+## bun
+# bun install
+alias bi='bun install'
+# bun run build
+alias brb='bun run build'
+# bun run lint
+alias brl='bun run lint'
+# bun run check
+alias brc='bun run check'
+# bun run test
+alias brt='bun run test'
+# bun run dev
+alias brd='bun run dev'
+# bun run db
+alias brdb='bun run db'
+
+## tt
+# run TT dev script
+alias ttdev='bun "$HOME/.config/tt/dev.ts"'
+# run TT tests
+alias tttest="DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun db && DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun test"
+# cd to tt repo
+alias tt='cd ~/d/tt/'
+# cd to tt-trees
+alias ttt='cd ~/d/tt-trees'
+# cleanup local pg
+alias cpg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
+# reset local pg
+alias rpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
+
+## git
+# # git checkout
+# alias kk='git checkout'
+# # git status
+# alias gs='git status'
+# # git pull
+# alias gp='git pull'
+# # git push
+# alias gpu='git push'
+# # git commit -am
+# alias gcm='git commit -am'
+# # git branch
+# alias gb='git branch'
+# # delete git branch
+# alias gbd='git branch -D'
+# lazygit
+alias lgit='lazygit'
+
+## ssh
+# add gitlab ssh key
+alias add-gitlab-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-gitlab >/dev/null 2>&1'
+# add github ssh key
+alias add-github-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macbook-pro-08-2025-github >/dev/null 2>&1'
+# add universal ssh key
+alias add-universal-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519_ssh_key >/dev/null 2>&1'
+# add all ssh keys
+function add-ssh-keys() {
+  add-gitlab-ssh-key
+  add-github-ssh-key
+  add-universal-ssh-key
+}
+
+if command -v ssh-add >/dev/null 2>&1; then
+  add-ssh-keys
+fi
+
+## pi
+# keep pi awake
+# alias cafpi='caffeinate -s -i -u pi'
+
+# # run pi with skills
+# pi() {
+#   # Package-manager commands must receive untouched arguments.
+#   case "${1-}" in
+#     update|install|remove|uninstall|list|config)
+#       command pi "$@"
+#       return
+#       ;;
+#   esac
+
+#   local global="$HOME/.agents/skills"
+#   local repo_root
+#   local args=(--no-skills)
+
+#   repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+
+#   for skill in tt-glab tt-jira-fst tt-kysely tt-remove-feature-flag; do
+#     [[ -d "$global/$skill" ]] && args+=(--skill "$global/$skill")
+#   done
+
+#   if [[ -n "$repo_root" ]]; then
+#     [[ -d "$repo_root/.pi/skills" ]] && args+=(--skill "$repo_root/.pi/skills")
+#     [[ -d "$repo_root/.agents/skills" ]] && args+=(--skill "$repo_root/.agents/skills")
+#   fi
+
+#   # Load other global skills after the selected overrides.
+#   args+=(--skill "$global")
+
+#   command pi "${args[@]}" "$@"
+# }
+
+## claude
+# keep claude awake
+alias cc="caffeinate -s -i -u claude"
+# run claude
+alias c='claude'
+# claude with chrome
+alias ch='claude --chrome'
+# claude remote control
+alias cr='claude remote-control'
+# cdash: dashboard of all active Claude sessions/background jobs/subagents
+# under the current directory (reads ~/.claude/sessions + ~/.claude/jobs).
+# Run in a second Warp pane/tab alongside your normal `c`/`claude` sessions.
+# claude fleet dashboard
+alias cdash='bash ~/.claude/scripts/fleet-dashboard.sh "$PWD" watch'
+
+## nav
+# cd to ~/d
+alias d='cd ~/d'
+
+## paths
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH="$PATH:$HOME/Library/Python/3.9/bin"
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  source "$NVM_DIR/nvm.sh"
+fi
+if [[ -s "$NVM_DIR/bash_completion" ]]; then
+  source "$NVM_DIR/bash_completion"
+fi
+
+# Puppeteer / Chromium
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+if command -v chromium >/dev/null 2>&1; then
+  export PUPPETEER_EXECUTABLE_PATH="$(command -v chromium)"
+fi
+
+# bun completions
+if [[ -s "$HOME/.bun/_bun" ]]; then
+  source "$HOME/.bun/_bun"
+fi
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# deno
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# PostgreSQL, if installed through Homebrew.
+if command -v brew >/dev/null 2>&1 && brew --prefix postgresql@17 >/dev/null 2>&1; then
+  export PATH="$(brew --prefix postgresql@17)/bin:$PATH"
+fi
+
+export EDITOR="zed --wait"
+export VISUAL="zed --wait"
+
+# Enable colors for ls
+export CLICOLOR=1
+
+# Define colors for different types (directories, links, executables, etc.)
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
