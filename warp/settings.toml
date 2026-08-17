@@ -16,13 +16,14 @@ show_agent_tips = true
 [agents.warp_agent.input.agent_toolbar_chip_selection_setting]
 
 [agents.warp_agent.input.agent_toolbar_chip_selection_setting.custom]
-left = [{ context_chip = "shell_git_branch" }, { context_chip = "git_diff_stats" }]
+left = []
 right = []
 
 [agents.warp_agent.active_ai]
 agent_mode_query_suggestions_enabled = false
-code_suggestions_enabled = true
+code_suggestions_enabled = false
 git_operations_autogen_enabled = false
+intelligent_autosuggestions_enabled = true
 
 [agents.warp_agent.other]
 agent_attribution_enabled = false
@@ -30,17 +31,89 @@ should_show_oz_updates_in_zero_state = false
 should_render_use_agent_toolbar_for_user_commands = false
 thinking_display_mode = "never_show"
 orchestration_message_display_mode = "always_collapse"
+show_conversation_history = false
 
 [agents.profiles]
 agent_mode_coding_permissions = "always_allow_reading"
 agent_mode_execute_readonly_commands = true
+
+[agents.execution_profiles]
+
+[agents.execution_profiles.default]
+apply_code_diffs = "agent_decides"
+ask_user_question = "always_ask"
+autosync_plans_to_warp_drive = true
+base_model = "gpt-5-6-luna-medium"
+command_allowlist = []
+command_denylist = [
+  'bash(\s.*)?',
+  'fish(\s.*)?',
+  'pwsh(\s.*)?',
+  'sh(\s.*)?',
+  'zsh(\s.*)?',
+  'curl(\s.*)?',
+  'eval(\s.*)?',
+  'source(\s.*)?',
+  'rm(\s.*)?',
+  'wget(\s.*)?',
+]
+computer_use = "always_ask"
+directory_allowlist = []
+execute_commands = "agent_decides"
+mcp_allowlist = []
+mcp_denylist = []
+mcp_permissions = "agent_decides"
+name = "Default"
+read_files = "agent_decides"
+run_agents = "always_ask"
+web_search_enabled = true
+write_to_pty = "always_ask"
+
+[agents.execution_profiles.legacy-48466a6437417977634964436b583034524e616d5239]
+apply_code_diffs = "agent_decides"
+ask_user_question = "always_ask"
+autosync_plans_to_warp_drive = true
+command_allowlist = []
+command_denylist = [
+  'bash(\s.*)?',
+  'fish(\s.*)?',
+  'pwsh(\s.*)?',
+  'sh(\s.*)?',
+  'zsh(\s.*)?',
+  'curl(\s.*)?',
+  'eval(\s.*)?',
+  'source(\s.*)?',
+  'rm(\s.*)?',
+  'wget(\s.*)?',
+]
+computer_use = "always_ask"
+directory_allowlist = []
+execute_commands = "agent_decides"
+mcp_allowlist = []
+mcp_denylist = []
+mcp_permissions = "agent_decides"
+name = ""
+read_files = "agent_decides"
+run_agents = "always_ask"
+web_search_enabled = true
+write_to_pty = "always_ask"
+
+[agents.third_party]
+auto_toggle_composer = false
+should_render_cli_agent_toolbar = false
+
+[agents.third_party.cli_agent_toolbar_chip_selection_setting]
+
+[agents.third_party.cli_agent_toolbar_chip_selection_setting.custom]
+left = []
+right = [{ context_chip = "working_directory" }, { context_chip = "shell_git_branch" }, "settings"]
 
 [appearance]
 spacing = "compact"
 
 [appearance.window]
 override_opacity = 100
-zoom_level = 100
+zoom_level = 110
 open_windows_at_custom_size = false
 override_blur = 64
 left_panel_visibility_across_tabs = true
@@ -65,6 +138,8 @@ selected_system_themes = { dark = "dark", light = "light" }
 
 [appearance.tabs]
 show_indicators_button = true
+workspace_decoration_visibility = "on_hover"
+tab_close_button_position = "left"
 
 [appearance.cursor]
 cursor_blink = "enabled"
@@ -120,6 +195,7 @@ show_global_workflows_in_universal_search = false
 [terminal]
 use_audible_bell = false
 show_terminal_zero_state_block = false
+osc52_clipboard_access = "write_only"
 
 [terminal.input]
 input_box_type_setting = "classic"
@@ -134,7 +210,8 @@ at_context_menu_in_terminal_mode = false
 snackbar_enabled = true
 restore_session = true
 show_changelog_after_update = true
-show_warning_before_quitting = false
+show_warning_before_quitting = true
+quit_on_last_window_closed = true
 
 [general.undo_close]
 grace_period = 60
@@ -161,9 +238,13 @@ open_file_editor = { external_editor = "zed" }
 auto_open_code_review_pane_on_first_agent_change = true
 show_global_search = false
 format_on_save = true
+show_project_explorer = true
 
 [accessibility]
 accessibility_verbosity = "concise"
 
 [account]
 is_settings_sync_enabled = true
+
+[warp_drive]
+enabled = false
