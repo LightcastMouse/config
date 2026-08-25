@@ -1,0 +1,102 @@
+# ayu_mirage_hc — Ayu Mirage (the palette Zed ships as "Ayu Mirage") with the
+# UI chrome pushed to higher contrast: brighter line numbers, a visible
+# cursorline/selection, and a lifted popup/statusline surface. Syntax hues are
+# unchanged from upstream ayu_mirage so it still reads as the same theme.
+# Based on runtime/themes/ayu_mirage.toml (Author: André Sá <enkodr@outlook.com>)
+
+# Syntax highlighting
+"type" = "blue"
+"type.builtin" = "blue"
+"constructor" = "green"
+"constant" = "magenta"
+"string" = "green"
+"string.regexp" = "orange"
+"string.special" = "yellow"
+"comment" = { fg = "comment_gray", modifiers = ["italic"] }
+"variable" = "foreground"
+"label" = "orange"
+"punctuation" = "foreground"
+"keyword" = "orange"
+"keyword.control" = "yellow"
+"keyword.directive" = "yellow"
+"operator" = "orange"
+"function" = "yellow"
+"tag" = "blue"
+"namespace" = "blue"
+"markup.heading" = "orange"
+"markup.list" = "yellow"
+"markup.bold" = { fg = "orange", modifiers = ["bold"] }
+"markup.italic" = { fg = "orange", modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.raw.block" = "orange"
+"markup.link.url" = "blue"
+"markup.link.text" = "yellow"
+"markup.link.label" = "green"
+"markup.quote" = "yellow"
+"diff.plus" = "green"
+"diff.minus" = "red"
+"diff.delta" = "yellow"
+
+# Interface
+"ui.background" = { bg = "background" }
+"ui.cursor" = { fg = "dark_gray", bg = "yellow" }
+"ui.cursor.primary" = { fg = "dark_gray", bg = "orange" }
+"ui.cursor.match" = "orange"
+"ui.linenr" = "linenr_dim"
+"ui.linenr.selected" = { fg = "foreground", modifiers = ["bold"] }
+"ui.statusline" = { fg = "foreground", bg = "surface" }
+"ui.statusline.normal" = { fg = "black", bg = "blue" }
+"ui.statusline.insert" = { fg = "black", bg = "orange" }
+"ui.statusline.select" = { fg = "black", bg = "magenta" }
+"ui.cursorline" = { bg = "cursorline_bg" }
+"ui.popup" = { fg = "foreground", bg = "surface" }
+"ui.window" = "gray"
+"ui.help" = { fg = "foreground", bg = "surface" }
+"ui.text" = "foreground"
+"ui.text.focus" = { bg = "dark_gray", fg = "foreground" }
+"ui.text.info" = "foreground"
+"ui.virtual.whitespace" = "dark_gray"
+"ui.virtual.ruler" = { bg = "surface" }
+"ui.virtual.inlay-hint" = { fg = "#ffcc66", bg = "#47433d" }
+"ui.menu" = { fg = "foreground", bg = "surface" }
+"ui.menu.selected" = { bg = "gray", fg = "background" }
+"ui.selection" = { bg = "selection_bg" }
+"warning" = "yellow"
+"error" = { fg = "red", modifiers = ["bold"] }
+"info" = { fg = "blue", modifiers = ["bold"] }
+"hint" = { fg = "blue", modifiers = ["bold"] }
+"diagnostic.hint" = { underline = { color = "blue", style = "curl" } }
+"diagnostic.info" = { underline = { color = "blue", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "yellow", style = "curl" } }
+"diagnostic.error" = { underline = { color = "red", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+"ui.bufferline" = { fg = "gray", bg = "background" }
+"ui.bufferline.active" = { fg = "foreground", bg = "dark_gray" }
+"ui.debug" = { fg = "orange", bg = "background" }
+"ui.highlight.frameline" = { bg = "#0067a3" }
+"ui.virtual.jump-label" = { fg = "red", modifiers = ["italic", "bold"] }
+
+"special" = "orange"
+
+[palette]
+background = "#1f2430"
+foreground = "#cccac2"
+
+black = "#1a1f29"
+blue = "#73d0ff"
+dark_gray = "#323843"
+cyan = "#444b55"
+gray = "#565b66"
+green = "#d5ff80"
+magenta = "#dfbfff"
+orange = "#ffad66"
+red = "#f28779"
+yellow = "#ffcc77"
+
+# High-contrast additions over stock ayu_mirage:
+comment_gray = "#8b93a7"   # was #565b66 (2.3:1 on bg) -> ~6:1, still reads as muted
+linenr_dim = "#565b66"     # was dark_gray #323843 (barely visible) -> readable gutter
+surface = "#262b38"        # lifted panel bg for statusline/popup/menu (was black, darker than bg)
+cursorline_bg = "#262b38"  # was black #1a1f29 (darker than bg, invisible) -> visible current line
+selection_bg = "#3d4b66"   # was dark_gray #323843 (low contrast) -> clearly visible selection

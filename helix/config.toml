@@ -1,3 +1,103 @@
+theme = "ayu_mirage_hc"
+
 [editor]
 auto-completion = true
 completion-timeout = 100
+
+[editor.file-picker]
+# Show gitignored files in the picker (space-f), but still hide a manual
+# blacklist via ~/.ignore (gitignore-syntax, unrelated to git) — "parents"
+# makes Helix walk up to home dir to find it from any project underneath.
+hidden = true
+parents = true
+git-ignore = false
+git-global = false
+git-exclude = false
+
+[keys.normal]
+h = "no_op"
+j = "move_char_left"
+k = "move_visual_line_down"
+i = "move_visual_line_up"
+o = "insert_mode"
+
+# Comment/uncomment the current line, or every line touched by the selection.
+# Note: Cmd only reaches Helix in terminals that support the "enhanced keyboard
+# protocol" (kitty, WezTerm, Ghostty, iTerm2 with that option on, etc.) and only
+# if the terminal app itself isn't already capturing Cmd-/ for its own use. If it
+# doesn't fire in your terminal, C-c already does the same thing by default.
+"Cmd-/" = "toggle_comments"
+
+# Alt + movement jumps by word (mirrors the classic Option/Alt-arrow "jump a
+# word" shortcut), extended to i/j/k/l and to the arrow keys themselves.
+"A-j" = "move_prev_word_start"
+"A-l" = "move_next_word_start"
+"A-i" = "move_prev_word_start"
+"A-k" = "move_next_word_start"
+"A-left" = "move_prev_word_start"
+"A-right" = "move_next_word_start"
+
+[keys.normal."C-w"]
+h = "no_op"
+j = "jump_view_left"
+k = "jump_view_down"
+i = "jump_view_up"
+J = "swap_view_left"
+K = "swap_view_down"
+I = "swap_view_up"
+
+[keys.normal.g]
+h = "no_op"
+j = "goto_line_start"
+k = "move_line_down"
+i = "move_line_up"
+o = "goto_implementation"
+
+[keys.normal.z]
+k = "scroll_down"
+i = "scroll_up"
+
+[keys.normal.Z]
+k = "scroll_down"
+i = "scroll_up"
+
+[keys.select]
+h = "no_op"
+j = "extend_char_left"
+k = "extend_visual_line_down"
+i = "extend_visual_line_up"
+o = "insert_mode"
+
+"Cmd-/" = "toggle_comments"
+
+# Same word-jump mapping as [keys.normal], extending instead of moving.
+"A-j" = "extend_prev_word_start"
+"A-l" = "extend_next_word_start"
+"A-i" = "extend_prev_word_start"
+"A-k" = "extend_next_word_start"
+"A-left" = "extend_prev_word_start"
+"A-right" = "extend_next_word_start"
+
+[keys.select."C-w"]
+h = "no_op"
+j = "jump_view_left"
+k = "jump_view_down"
+i = "jump_view_up"
+J = "swap_view_left"
+K = "swap_view_down"
+I = "swap_view_up"
+
+[keys.select.g]
+h = "no_op"
+j = "goto_line_start"
+k = "move_line_down"
+i = "move_line_up"
+o = "goto_implementation"
+
+[keys.select.z]
+k = "scroll_down"
+i = "scroll_up"
+
+[keys.select.Z]
+k = "scroll_down"
+i = "scroll_up"
