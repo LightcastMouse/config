@@ -1,0 +1,12 @@
+#compdef s
+
+_s() {
+  local -a subcmds
+  subcmds=(
+    'z:source ~/.zshrc'
+    's:source ./setup.sh'
+  )
+  _describe -t subcmds 's subcommand' subcmds
+}
+
+_s "$@"

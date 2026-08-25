@@ -1,0 +1,9 @@
+#compdef worktree
+
+_worktree() {
+  _arguments \
+    '(-h --help)'{-h,--help}'[show help]' \
+    '1:dir-name:'
+}
+
+_worktree "$@"

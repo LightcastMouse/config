@@ -1,0 +1,7 @@
+#compdef killPID
+
+_killPID() {
+  _pids
+}
+
+_killPID "$@"

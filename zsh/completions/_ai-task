@@ -1,0 +1,45 @@
+#compdef ai-task
+
+_ai-task() {
+  local -a subcmds
+  subcmds=(
+    'plan-ticket:plan a Jira ticket'
+    'plan-work:plan implementation work'
+    'code:implement planned work'
+    'review:review changes'
+    'test:run tests'
+    'auto:run the full automated flow'
+  )
+
+  _arguments -C \
+    '(-h --help)'{-h,--help}'[show help]' \
+    '--mode=[mode]:mode' \
+    '--ticket=[Jira ticket key]:ticket' \
+    '--branch=[branch name]:branch:->branches' \
+    '--dirname=[worktree dir name]:dirname' \
+    '--repo=[repo path]:repo:_directories' \
+    '--remote=[git remote]:remote' \
+    '--base=[base branch]:base:->branches' \
+    '--no-jira[skip Jira lookup]' \
+    '--use-pg[use postgres]' \
+    '--no-fetch[skip git fetch]' \
+    '(-c --continue)'{-c,--continue}'[continue existing session]' \
+    '(-r --resume)'{-r,--resume}'[resume existing session]' \
+    '1: :->subcmd' \
+    '*:: :->rest'
+
+  case $state in
+    subcmd)
+      _describe -t subcmds 'ai-task subcommand' subcmds
+      ;;
+    branches)
+      if (( $+commands[git] )); then
+        local -a branches
+        branches=(${(f)"$(git branch --format='%(refname:short)' 2>/dev/null)"})
+        _describe -t branches 'branch' branches
+      fi
+      ;;
+  esac
+}
+
+_ai-task "$@"

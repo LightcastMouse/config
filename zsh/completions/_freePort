@@ -1,0 +1,9 @@
+#compdef freePort findPortPID
+
+_freePort() {
+  local -a ports
+  ports=(${(fu)"$(lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {n=split($9,a,":"); print a[n]}')"})
+  _describe -t ports 'listening port' ports
+}
+
+_freePort "$@"

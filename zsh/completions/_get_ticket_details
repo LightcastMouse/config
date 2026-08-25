@@ -1,0 +1,10 @@
+#compdef get_ticket_details
+
+_get_ticket_details() {
+  _arguments \
+    '(-h --help)'{-h,--help}'[show help]' \
+    '--repo=[repo path]:repo:_directories' \
+    '1:ticket-key-or-number:'
+}
+
+_get_ticket_details "$@"

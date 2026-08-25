@@ -1,0 +1,10 @@
+#compdef warp-tabs wt
+
+_warp-tabs() {
+  local -a valid_colors=(black red green yellow blue magenta cyan white)
+  _arguments \
+    '(--color -c)'{--color,-c}'[tab color]:color:(('"${(j: :)valid_colors}"'))' \
+    '1:ticket:'
+}
+
+_warp-tabs "$@"
