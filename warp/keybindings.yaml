@@ -1,9 +1,21 @@
 ---
-"pane_group:navigate_down": none
-"pane_group:navigate_left": alt-shift-cmd-left
-"pane_group:navigate_up": none
-"pane_group:navigate_right": alt-shift-cmd-right
-"workspace:activate_next_tab": alt-cmd-down
-"workspace:activate_prev_tab": alt-cmd-up
+/agent: none
+/cloud-agent: none
+"editor:select_to_line_end": none
+"terminal:focus_input": none
+"editor:select_to_line_start": none
+"notebookview:focus_terminal_input": none
 "pane_group:navigate_prev": alt-cmd-left
+"editor_view:run_commands": none
+"pane_group:navigate_up": none
 "pane_group:navigate_next": alt-cmd-right
+"workspace:toggle_ai_assistant": none
+"workspace:jump_to_latest_toast": none
+"pane_group:navigate_right": alt-shift-cmd-right
+"workspace:toggle_sync_terminal_inputs_in_tab": none
+"workspace:activate_prev_tab": alt-cmd-up
+"workspace:activate_next_tab": alt-cmd-down
+"pane_group:navigate_left": alt-shift-cmd-left
+"terminal:ask_ai_assistant": none
+"pane_group:navigate_down": none
+"workspace:left_panel_agent_conversations": none

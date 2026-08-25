@@ -6,12 +6,12 @@ voice_input_toggle_key = "fn"
 voice_input_enabled = false
 
 [agents.warp_agent]
-is_any_ai_enabled = true
+is_any_ai_enabled = false
 
 [agents.warp_agent.input]
 nld_in_terminal_enabled = false
 ai_auto_detection_enabled = false
-show_agent_tips = true
+show_agent_tips = false
 
 [agents.warp_agent.input.agent_toolbar_chip_selection_setting]
 
@@ -24,6 +24,7 @@ agent_mode_query_suggestions_enabled = false
 code_suggestions_enabled = false
 git_operations_autogen_enabled = false
 intelligent_autosuggestions_enabled = true
+shared_block_title_generation_enabled = false
 
 [agents.warp_agent.other]
 agent_attribution_enabled = false
@@ -32,6 +33,7 @@ should_render_use_agent_toolbar_for_user_commands = false
 thinking_display_mode = "never_show"
 orchestration_message_display_mode = "always_collapse"
 show_conversation_history = false
+auto_approve_bypasses_command_denylist = false
 
 [agents.profiles]
 agent_mode_coding_permissions = "always_allow_reading"
@@ -113,7 +115,7 @@ spacing = "compact"
 
 [appearance.window]
 override_opacity = 100
-zoom_level = 110
+zoom_level = 100
 open_windows_at_custom_size = false
 override_blur = 64
 left_panel_visibility_across_tabs = true
@@ -199,12 +201,16 @@ osc52_clipboard_access = "write_only"
 
 [terminal.input]
 input_box_type_setting = "classic"
-show_hint_text = true
+show_hint_text = false
 honor_ps1 = true
 alias_expansion_enabled = true
 command_corrections = true
 completions_open_while_typing = false
 at_context_menu_in_terminal_mode = false
+
+[terminal.input.extra_meta_keys]
+left_alt = false
+right_alt = false
 
 [general]
 snackbar_enabled = true
