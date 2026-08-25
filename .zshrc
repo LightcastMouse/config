@@ -1,4 +1,12 @@
 
+fpath=(~/.config/zsh/completions /opt/homebrew/share/zsh/site-functions $fpath)
+autoload -Uz compinit && compinit
+autoload -Uz bashcompinit && bashcompinit
+[ -s ~/.config/zsh/npm-completion.bash ] && source ~/.config/zsh/npm-completion.bash
+
+# Ctrl-Space triggers zsh's native completion menu (was set-mark-command, rarely used)
+bindkey '^@' expand-or-complete
+
 autoload -Uz colors && colors
 
 default_dir_color=150
@@ -189,47 +197,80 @@ function freePort() {
 ## warp
 export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
 
-# open 3 Warp tabs
+# open '<ticket> lgit', '<ticket> ai' and '<ticket> dev' tabs in the current window
 function warp-tabs() {
-  if [[ $# -ne 1 || ! "$1" =~ '^[[:alnum:]_-]+$' ]]; then
-    echo 'usage: warp-tabs <ticket>' >&2
+  local -a valid_colors=(black red green yellow blue magenta cyan white)
+  local usage="usage: warp-tabs [--color|-c ${(j:|:)valid_colors}] <ticket>"
+  local color='' ticket=''
+  while (( $# )); do
+    case $1 in
+      --color=*) color=${1#--color=} ;;
+      -c=*) color=${1#-c=} ;;
+      --color|-c)
+        if (( $# < 2 )); then echo "$usage" >&2; return 2; fi
+        color=$2; shift ;;
+      *)
+        if [[ -z $ticket ]]; then ticket=$1
+        else echo "$usage" >&2; return 2; fi
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z $ticket || ! $ticket =~ '^[^"\\/]+$' ]]; then
+    echo "$usage" >&2
     return 2
   fi
+  if [[ -n $color && -z ${valid_colors[(r)$color]} ]]; then
+    echo "warp-tabs: invalid --color '$color', must be one of: ${(j:, :)valid_colors}" >&2
+    return 2
+  fi
+  set -- "$ticket"
 
-  osascript <<'APPLESCRIPT'
-tell application "Warp" to activate
-tell application "System Events"
-  repeat 3 times
-    keystroke "t" using {command down}
-    delay 1
-  end repeat
-end tell
-APPLESCRIPT
+  # Tab titles and colors come from tab configs, one per tab: a deeplinked tab
+  # config is the only way to name a tab without keystroke automation. Writing
+  # custom_title into warp.sqlite does nothing, because the running app never
+  # re-reads that table.
+  local dir="$HOME/.warp/tab_configs"
+  local slug=${1//[^[:alnum:]_-]/}  # deeplinks take no brackets or spaces
+  mkdir -p "$dir" || return 1
 
-  python3 - "$WARP_DB" "$1" <<'PY'
-import sqlite3
-import sys
-import time
+  # one color per ticket, stable across runs so a ticket's tabs stay recognizable,
+  # unless overridden with --color
+  if [[ -z $color ]]; then
+    local -a colors=(red green yellow blue magenta cyan)
+    color=$colors[$(( $(print -rn -- "$slug" | cksum | cut -d' ' -f1) % $#colors + 1 ))]
+  fi
 
-titles = [f"[{sys.argv[2]}] {name}" for name in ("dev", "pi", "lgit")]
-for _ in range(10):
-    try:
-        with sqlite3.connect(sys.argv[1], timeout=1) as db:
-            tab_ids = [row[0] for row in db.execute(
-                "SELECT id FROM tabs ORDER BY id DESC LIMIT 3"
-            )]
-            if len(tab_ids) != 3:
-                raise RuntimeError("could not find three new Warp tabs")
-            db.executemany(
-                "UPDATE tabs SET custom_title = ? WHERE id = ?",
-                zip(titles, tab_ids),
-            )
-        break
-    except sqlite3.OperationalError:
-        time.sleep(0.2)
-else:
-    raise SystemExit("could not update Warp tab titles")
-PY
+  setopt local_options null_glob
+  local stale
+  for stale in "$dir"/warp-tabs-*.toml; do
+    [[ $stale == "$dir"/warp-tabs-$slug-*.toml ]] || rm -f "$stale"
+  done
+
+  local name config
+  local -a configs
+  for name in lgit ai dev; do
+    config="warp-tabs-$slug-$name"
+    configs+=("$dir/$config.toml")
+    {
+      print -- "name = \"$config\""
+      print -- "title = \"$1 $name\""
+      print -- "color = \"$color\""
+      print --
+      print -- '[[panes]]'
+      print -- 'id = "root"'
+      print -- 'type = "terminal"'
+      print -- "directory = \"$PWD\""
+      print -- 'is_focused = true'
+    } > "$dir/$config.toml" || return 1
+    open "warp://tab_config/$config"
+    sleep 0.4  # keep the tabs in order
+  done
+
+  # give Warp a moment to read the last deeplink before cleaning up; these
+  # files are only needed transiently to pass title/color/directory at open time
+  ( sleep 1; rm -f "${configs[@]}" ) &!
 }
 # open 3 Warp tabs
 alias wt='warp-tabs'
@@ -400,6 +441,13 @@ alias rpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
 # alias gbd='git branch -D'
 # lazygit
 alias lgit='lazygit'
+
+# create a git worktree in a sibling "<repo>-trees" dir and cd into it
+function worktree() {
+  local worktree_path
+  worktree_path=$(command worktree "$@") || return $?
+  cd "$worktree_path"
+}
 
 ## ssh
 # add gitlab ssh key
