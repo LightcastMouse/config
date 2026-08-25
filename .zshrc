@@ -275,6 +275,42 @@ function warp-tabs() {
 # open 3 Warp tabs
 alias wt='warp-tabs'
 
+# set the current tab's name and color
+function tab-config() {
+  local -a valid_colors=(black red green yellow blue magenta cyan white)
+  local usage="usage: tab-config <name> <color: ${(j:|:)valid_colors}>"
+  if (( $# != 2 )); then echo "$usage" >&2; return 2; fi
+  local name=$1 color=$2
+  if [[ -z $name || ! $name =~ '^[^"\\/]+$' ]]; then
+    echo "$usage" >&2
+    return 2
+  fi
+  if [[ -z ${valid_colors[(r)$color]} ]]; then
+    echo "tab-config: invalid color '$color', must be one of: ${(j:, :)valid_colors}" >&2
+    return 2
+  fi
+
+  local dir="$HOME/.warp/tab_configs"
+  mkdir -p "$dir" || return 1
+  local slug=${name//[^[:alnum:]_-]/}
+  local config="tab-config-$slug"
+  {
+    print -- "name = \"$config\""
+    print -- "title = \"$name\""
+    print -- "color = \"$color\""
+    print --
+    print -- '[[panes]]'
+    print -- 'id = "root"'
+    print -- 'type = "terminal"'
+    print -- "directory = \"$PWD\""
+    print -- 'is_focused = true'
+  } > "$dir/$config.toml" || return 1
+  open "warp://tab_config/$config"
+
+  ( sleep 1; rm -f "$dir/$config.toml" ) &!
+}
+alias tabc='tab-config'
+
 # prune Warp history
 function warp_prune_interactive {
   : "${WARP_DB:?set WARP_DB first}"
