@@ -1,4 +1,9 @@
 {
+  "icon_theme": {
+    "mode": "light",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
   "cli_default_open_behavior": "new_window",
   "collaboration_panel": {
     "dock": "right",
@@ -95,9 +100,9 @@
   },
   "context_servers": {},
   "theme": {
-    "mode": "system",
-    "light": "Ayu Light",
-    "dark": "Ayu Mirage Markdown Headings",
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Ayu Dark",
   },
   "experimental.theme_overrides": {
     "hint": "#199446",
