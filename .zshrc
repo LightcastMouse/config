@@ -95,6 +95,12 @@ add-zsh-hook precmd _set_prompt
 ## shell
 # source .zshrc
 function s {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: s <z|s>"
+    echo "  z  source ~/.zshrc"
+    echo "  s  source setup.sh"
+    return 0
+  fi
   if [[ $1 = "z" ]]; then
     source ~/.zshrc &&
       echo "sourced ~/.zshrc"
@@ -107,6 +113,11 @@ function s {
 # list all aliases/funcs, ordered by last used
 # tag a preceding comment with (ahelp-blacklist-me) to hide that entry
 function ahelp() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: ahelp"
+    echo "  list all aliases/functions from ~/.config/.zshrc, ordered by last used"
+    return 0
+  fi
   local cfg="$HOME/.config/.zshrc"
   local db="${WARP_DB:-$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite}"
 
@@ -125,40 +136,52 @@ function ahelp() {
       next
     }
     {
+      if (capturing) {
+        if ($0 ~ /-h|--help/) hasflag = 1
+        if ($0 ~ /^}/) { emit(curname, curtype, hasflag); capturing = 0 }
+        next
+      }
       if ($0 ~ /^## /) { next }
       if ($0 ~ /^# /)  { c = $0; sub(/^# */, "", c); next }
       if ($0 ~ /^alias [a-zA-Z0-9_-]+=/) {
         name = $0; sub(/^alias /, "", name); sub(/=.*/, "", name)
-        emit(name); next
+        emit(name, "alias", -1); next
       }
       if ($0 ~ /^function [a-zA-Z0-9_-]+/) {
         name = $0; sub(/^function /, "", name); sub(/[ (].*/, "", name)
-        emit(name); next
+        curname = name; curtype = "function"; hasflag = ($0 ~ /-h|--help/) ? 1 : 0
+        capturing = 1; next
       }
       if ($0 ~ /^[a-zA-Z_][a-zA-Z0-9_-]*\(\)/) {
         name = $0; sub(/\(\).*/, "", name)
-        emit(name); next
+        curname = name; curtype = "function"; hasflag = ($0 ~ /-h|--help/) ? 1 : 0
+        capturing = 1; next
       }
     }
-    function emit(name) {
+    function emit(name, type, flag) {
       if (c ~ /\(ahelp-blacklist-me\)/) { c = ""; return }
       t = last[name] + 0
-      nrows++; rowt[nrows] = t; rowname[nrows] = name; rowc[nrows] = c
+      nrows++; rowt[nrows] = t; rowname[nrows] = name; rowtype[nrows] = type
+      rowflag[nrows] = (flag == 1) ? "yes" : "-"
+      rowc[nrows] = c
       c = ""
     }
     END {
       for (i = 1; i <= nrows; i++) {
-        print rowt[i] "\t" rowname[i] "\t" rowc[i]
+        print rowt[i] "\t" rowname[i] "\t" rowtype[i] "\t" rowflag[i] "\t" rowc[i]
       }
     }
-  ' - "$cfg" | sort -t $'\t' -k1,1nr | while IFS=$'\t' read -r ts name cmt; do
-    if [[ "$ts" == "0" ]]; then
-      d="never"
-    else
-      d="$(date -r "$ts" +%Y-%m-%d)"
-    fi
-    printf "%-22s %-30s %s\n" "$name" "$cmt" "$d"
-  done
+  ' - "$cfg" | sort -t $'\t' -k1,1nr | {
+    printf "%-22s %-10s %-12s %-7s %s\n" "NAME" "TYPE" "LAST USED" "FLAGS" "DESCRIPTION"
+    while IFS=$'\t' read -r ts name type flag cmt; do
+      if [[ "$ts" == "0" ]]; then
+        d="never"
+      else
+        d="$(date -r "$ts" +%Y-%m-%d)"
+      fi
+      printf "%-22s %-10s %-12s %-7s %s\n" "$name" "$type" "$d" "$flag" "$cmt"
+    done
+  }
 }
 
 ## editor
@@ -168,16 +191,28 @@ alias co='zed .'
 ## network
 # find PID on port
 function findPortPID() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: findPortPID <port>"
+    return 0
+  fi
   lsof -nP -iTCP:"$1" -sTCP:LISTEN
 }
 
 # kill a PID
 function killPID() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: killPID <pid>"
+    return 0
+  fi
   kill "$1"
 }
 
 # kill process on port
 function freePort() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo 'usage: freePort <port>'
+    return 0
+  fi
   if [[ $# -ne 1 || ! "$1" =~ '^[0-9]+$' || "$1" -lt 1 || "$1" -gt 65535 ]]; then
     echo 'usage: freePort <port>' >&2
     return 2
@@ -204,6 +239,7 @@ function warp-tabs() {
   local color='' ticket=''
   while (( $# )); do
     case $1 in
+      -h|--help) echo "$usage"; return 0 ;;
       --color=*) color=${1#--color=} ;;
       -c=*) color=${1#-c=} ;;
       --color|-c)
@@ -279,6 +315,10 @@ alias wt='warp-tabs'
 function tab-config() {
   local -a valid_colors=(black red green yellow blue magenta cyan white)
   local usage="usage: tab-config <name> <color: ${(j:|:)valid_colors}>"
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "$usage"
+    return 0
+  fi
   if (( $# != 2 )); then echo "$usage" >&2; return 2; fi
   local name=$1 color=$2
   if [[ -z $name || ! $name =~ '^[^"\\/]+$' ]]; then
@@ -313,6 +353,12 @@ alias tabc='tab-config'
 
 # prune Warp history
 function warp_prune_interactive {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: warp_prune_interactive"
+    echo "  interactively select and delete rows from Warp history (commands, ai_queries,"
+    echo "  agent_conversations) and matching lines from \$HISTFILE, via fzf"
+    return 0
+  fi
   : "${WARP_DB:?set WARP_DB first}"
   command -v fzf >/dev/null || { echo 'missing: fzf' >&2; return 1; }
 
@@ -482,6 +528,10 @@ alias lgit='lazygit'
 
 # create a git worktree in a sibling "<repo>-trees" dir and cd into it
 function worktree() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    command worktree "$@"
+    return $?
+  fi
   local worktree_path
   worktree_path=$(command worktree "$@") || return $?
   cd "$worktree_path"
@@ -496,6 +546,11 @@ alias add-github-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519-m4-macb
 alias add-universal-ssh-key='ssh-add --apple-use-keychain ~/.ssh/id_ed25519_ssh_key >/dev/null 2>&1'
 # add all ssh keys
 function add-ssh-keys() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: add-ssh-keys"
+    echo "  add the gitlab, github, and universal ssh keys to the agent"
+    return 0
+  fi
   add-gitlab-ssh-key
   add-github-ssh-key
   add-universal-ssh-key
