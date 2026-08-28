@@ -443,6 +443,8 @@ alias brc='bun run check'
 alias brt='bun run test'
 # bun run dev
 alias brd='bun run dev'
+## bun run fmt
+alias brf='bun run fmt'
 # bun run db
 alias brdb='bun run db'
 
