@@ -101,8 +101,8 @@
   "context_servers": {},
   "theme": {
     "mode": "dark",
-    "light": "One Light",
-    "dark": "Ayu Dark",
+    "light": "Gruvbox Light",
+    "dark": "Ayu Mirage",
   },
   "experimental.theme_overrides": {
     "hint": "#199446",
