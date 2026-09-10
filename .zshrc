@@ -137,32 +137,68 @@ function ahelp() {
     }
     {
       if (capturing) {
-        if ($0 ~ /-h|--help/) hasflag = 1
-        if ($0 ~ /^}/) { emit(curname, curtype, hasflag); capturing = 0 }
+        line = $0
+        sub(/^[ \t]+/, "", line)
+
+        # case-label flags, e.g. "-h|--help)" or "--color=*)" or "--color|-c)"
+        if (line ~ /^-/) {
+          paren = index(line, ")")
+          if (paren > 0) {
+            label = substr(line, 1, paren - 1)
+            if (label ~ /^-/ && label !~ /[ \t]/) {
+              n = split(label, alts, "|")
+              for (k = 1; k <= n; k++) {
+                f = alts[k]
+                sub(/=\*$/, "", f)
+                if (f ~ /^--?[A-Za-z][A-Za-z0-9-]*$/) addflag(f)
+              }
+            }
+          }
+        }
+
+        # quoted comparisons, e.g. $1 = "-h" or $1 == "--help"
+        rest = line
+        while (match(rest, /= *"-[^"]*"/)) {
+          seg = substr(rest, RSTART, RLENGTH)
+          qs = index(seg, "\"")
+          tok = substr(seg, qs + 1, length(seg) - qs - 1)
+          if (tok ~ /^--?[A-Za-z][A-Za-z0-9-]*$/) addflag(tok)
+          rest = substr(rest, RSTART + RLENGTH)
+        }
+
+        if ($0 ~ /^}/) { emit(curname, curtype, flagstr); capturing = 0 }
         next
       }
       if ($0 ~ /^## /) { next }
       if ($0 ~ /^# /)  { c = $0; sub(/^# */, "", c); next }
       if ($0 ~ /^alias [a-zA-Z0-9_-]+=/) {
         name = $0; sub(/^alias /, "", name); sub(/=.*/, "", name)
-        emit(name, "alias", -1); next
+        emit(name, "alias", ""); next
       }
       if ($0 ~ /^function [a-zA-Z0-9_-]+/) {
         name = $0; sub(/^function /, "", name); sub(/[ (].*/, "", name)
-        curname = name; curtype = "function"; hasflag = ($0 ~ /-h|--help/) ? 1 : 0
+        curname = name; curtype = "function"
+        flagstr = ""; delete seen
         capturing = 1; next
       }
       if ($0 ~ /^[a-zA-Z_][a-zA-Z0-9_-]*\(\)/) {
         name = $0; sub(/\(\).*/, "", name)
-        curname = name; curtype = "function"; hasflag = ($0 ~ /-h|--help/) ? 1 : 0
+        curname = name; curtype = "function"
+        flagstr = ""; delete seen
         capturing = 1; next
       }
     }
-    function emit(name, type, flag) {
+    function addflag(f) {
+      if (!(f in seen)) {
+        seen[f] = 1
+        flagstr = (flagstr == "") ? f : flagstr ", " f
+      }
+    }
+    function emit(name, type, flags) {
       if (c ~ /\(ahelp-blacklist-me\)/) { c = ""; return }
       t = last[name] + 0
       nrows++; rowt[nrows] = t; rowname[nrows] = name; rowtype[nrows] = type
-      rowflag[nrows] = (flag == 1) ? "yes" : "-"
+      rowflag[nrows] = (flags == "") ? "-" : flags
       rowc[nrows] = c
       c = ""
     }
@@ -172,14 +208,14 @@ function ahelp() {
       }
     }
   ' - "$cfg" | sort -t $'\t' -k1,1nr | {
-    printf "%-22s %-10s %-12s %-7s %s\n" "NAME" "TYPE" "LAST USED" "FLAGS" "DESCRIPTION"
+    printf "%-22s %-10s %-12s %-26s %s\n" "NAME" "TYPE" "LAST USED" "FLAGS" "DESCRIPTION"
     while IFS=$'\t' read -r ts name type flag cmt; do
       if [[ "$ts" == "0" ]]; then
         d="never"
       else
         d="$(date -r "$ts" +%Y-%m-%d)"
       fi
-      printf "%-22s %-10s %-12s %-7s %s\n" "$name" "$type" "$d" "$flag" "$cmt"
+      printf "%-22s %-10s %-12s %-26s %s\n" "$name" "$type" "$d" "$flag" "$cmt"
     done
   }
 }
@@ -535,6 +571,36 @@ function worktree() {
   local worktree_path
   worktree_path=$(command worktree "$@") || return $?
   cd "$worktree_path"
+}
+
+# dump the current dir's DB (real Postgres via DB_CONNECTION_STRING, else local pglite) to lab/db/manual-dump.sql
+function db-dump() {
+  if [[ $1 = "-h" || $1 = "--help" ]]; then
+    echo "usage: db-dump"
+    echo "  dumps the current dir's DB into lab/db/manual-dump.sql"
+    echo "  uses DB_CONNECTION_STRING from env or ./.env if set, else falls back to the local pglite dump (bun run dump)"
+    return 0
+  fi
+
+  local out_dir="lab/db"
+  local out_file="$out_dir/manual-dump.sql"
+  mkdir -p "$out_dir"
+
+  local conn_string="$DB_CONNECTION_STRING"
+  if [[ -z "$conn_string" && -f .env ]]; then
+    conn_string=$(grep -E '^DB_CONNECTION_STRING=' .env | tail -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'\$//")
+  fi
+
+  if [[ -n "$conn_string" ]]; then
+    echo "Dumping real Postgres DB via DB_CONNECTION_STRING to $out_file"
+    pg_dump "$conn_string" -f "$out_file"
+  else
+    echo "No DB_CONNECTION_STRING found, falling back to local pglite dump"
+    bun run dump || return $?
+    mv dev-db-dump.sql "$out_file"
+  fi
+
+  echo "Wrote $out_file"
 }
 
 ## ssh
