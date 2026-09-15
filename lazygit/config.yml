@@ -1,3 +1,7 @@
+git:
+  diffRenderers:
+    - type: extDiff
+      command: difft --color=always --display=side-by-side-show-both --context={{diffContext}}
 customCommands:
   - key: 'G'
     context: 'localBranches'
@@ -18,7 +22,6 @@ customCommands:
         esac
       '
     output: none
-
   - key: 'o'
     context: 'localBranches'
     description: 'Create PR/MR in browser'
@@ -34,7 +37,6 @@ customCommands:
         open "$url"
       '
     output: none
-
 keybinding:
   branches:
     createPullRequest: <disabled>
