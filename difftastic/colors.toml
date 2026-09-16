@@ -31,15 +31,15 @@
 # default (e.g. so `added`/`removed` don't override syntax-highlight text).
 
 [dark]
-string_literal = { color = "#e5c07b" }               # warm amber (was bright magenta)
-comment        = { color = "#404040", italic = true } # brighter, higher-contrast blue
-keyword        = { color = "#c678dd", bold = true }   # purple + bold (was bold-only, no color)
-type           = { color = "#56b6c2", bold = true }   # teal + bold (was bold-only, no color)
-error          = { color = "#e06c75", bold = true }   # soft red, bold, so parse errors stand out
 removed_line   = { background = "#4a000e" }
 removed        = { color = "none", background = "#d40027" }
 added_line     = { background = "#0e3300" }
 added          = { color = "none", background = "#258c00" }
+string_literal = { color = "#d4fe7f" }               # Zed Ayu Mirage: syntax.string
+comment        = { color = "#5c6773", italic = true } # Zed Ayu Mirage: syntax.comment
+keyword        = { color = "#ffad65", bold = true }   # Zed Ayu Mirage: syntax.keyword
+type           = { color = "#73cfff", bold = true }   # Zed Ayu Mirage: syntax.type
+error          = { color = "#f18779", bold = true }   # Zed Ayu Mirage: status.error
 
 # [light]
 # string_literal = { color = "#986801" }
