@@ -1,0 +1,53 @@
+# Difftastic color config (local fork feature — see ~/d/difftastic).
+#
+# Synthesized from earlier requests in this session:
+#   - "higher contrast and/or brighter colors" for added/removed lines
+#     -> using hex/truecolor instead of ANSI "bright" names, since ANSI
+#        bright red/green get muted by some terminal palettes (the
+#        original complaint), while hex bypasses the terminal theme
+#        entirely and always renders at full saturation.
+#   - confusion that string literals showed up purple instead of red/green
+#     -> reassigned purple to `keyword` (a more conventional mapping,
+#        e.g. Atom One Dark/Monokai use purple for keywords), and gave
+#        string literals a warm amber/gold instead so it reads clearly
+#        as "syntax highlighting", not "part of the diff".
+#   - "the entire length of changed lines should be tinted red/green,
+#     like delta/VSCode, but keep syntax-highlighted text colors -
+#     don't force red/green text"
+#     -> `added`/`removed` are the emphasis style for the exact changed
+#        characters (delta's plus-emph-style/minus-emph-style):
+#        background only, `color = "none"` so syntax highlighting
+#        (keyword purple, string amber, etc.) still shows through.
+#     -> `added_line`/`removed_line` are a dimmer background applied to
+#        the rest of a changed line (delta's plus-style/minus-style),
+#        including whitespace gaps and padding, so the whole line reads
+#        as one continuous tinted block.
+#
+# A role can be:
+#   role = "colorname"                      (just a color)
+#   role = "#rrggbb"                        (hex color)
+#   role = { color = "...", background = "...", bold = true, italic = true, underline = true }
+# `color`/`background` also accept "none" to explicitly clear a built-in
+# default (e.g. so `added`/`removed` don't override syntax-highlight text).
+
+[dark]
+string_literal = { color = "#e5c07b" }               # warm amber (was bright magenta)
+comment        = { color = "#61afef", italic = true } # brighter, higher-contrast blue
+keyword        = { color = "#c678dd", bold = true }   # purple + bold (was bold-only, no color)
+type           = { color = "#56b6c2", bold = true }   # teal + bold (was bold-only, no color)
+error          = { color = "#e06c75", bold = true }   # soft red, bold, so parse errors stand out
+added          = { color = "none", background = "#0a2e0a" }   # emphasis: exact added chars
+removed        = { color = "none", background = "#3a0000" }   # emphasis: exact removed chars
+added_line     = { background = "#04160b" }                   # dim tint: rest of an added line
+removed_line   = { background = "#1a0505" }                   # dim tint: rest of a removed line
+
+[light]
+string_literal = { color = "#986801" }
+comment        = { color = "#0184bc", italic = true }
+keyword        = { color = "#a626a4", bold = true }
+type           = { color = "#0997a6", bold = true }
+error          = { color = "#e45649", bold = true }
+added          = { color = "none", background = "#c9ecc9" }
+removed        = { color = "none", background = "#f6c9c7" }
+added_line     = { background = "#e6f4e6" }
+removed_line   = { background = "#fbe7e6" }
