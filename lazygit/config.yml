@@ -2,10 +2,10 @@ git:
   diffRenderers:
     - name: difftastic-side-by-side
       type: extDiff
-      command: difft --color=always --display=side-by-side-show-both --context={{diffContext}}
+      command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=side-by-side-show-both --context={{diffContext}}
     - name: difftastic-inline
       type: extDiff
-      command: difft --color=always --display=inline --context={{diffContext}}
+      command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=inline --context={{diffContext}}
     - name: delta-side-by-side
       command: delta --dark --paging=never --line-numbers
     - name: delta-inline
