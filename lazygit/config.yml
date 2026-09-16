@@ -1,11 +1,19 @@
 git:
   diffRenderers:
-    - type: extDiff
+    - name: difftastic-side-by-side
+      type: extDiff
       command: difft --color=always --display=side-by-side-show-both --context={{diffContext}}
+    - name: difftastic-inline
+      type: extDiff
+      command: difft --color=always --display=inline --context={{diffContext}}
+    - name: delta-side-by-side
+      command: delta --dark --paging=never --line-numbers
+    - name: delta-inline
+      command: delta --dark --paging=never --line-numbers
 customCommands:
-  - key: 'G'
-    context: 'localBranches'
-    description: 'Open PR/MR in browser'
+  - key: "G"
+    context: "localBranches"
+    description: "Open PR/MR in browser"
     command: |
       sh -c '
         branch='{{.SelectedLocalBranch.Name}}'
@@ -22,9 +30,9 @@ customCommands:
         esac
       '
     output: none
-  - key: 'o'
-    context: 'localBranches'
-    description: 'Create PR/MR in browser'
+  - key: "o"
+    context: "localBranches"
+    description: "Create PR/MR in browser"
     command: |
       sh -c '
         branch='{{.SelectedLocalBranch.Name}}'
