@@ -7,7 +7,7 @@ git:
       type: extDiff
       command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=inline --context={{diffContext}}
     - name: delta-side-by-side
-      command: delta --dark --paging=never --line-numbers
+      command: delta --dark --paging=never --line-numbers --side-by-side
     - name: delta-inline
       command: delta --dark --paging=never --line-numbers
 customCommands:
