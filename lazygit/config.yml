@@ -1,11 +1,11 @@
 git:
   diffRenderers:
-    - name: difftastic-side-by-side
-      type: extDiff
-      command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=side-by-side-show-both --context={{diffContext}}
-    - name: difftastic-inline
-      type: extDiff
-      command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=inline --context={{diffContext}}
+    # - name: difftastic-side-by-side
+    #   type: extDiff
+    #   command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=side-by-side-show-both --context={{diffContext}}
+    # - name: difftastic-inline
+    #   type: extDiff
+    #   command: /Users/thomas.black/d/difftastic/target/release/difft --color=always --display=inline --context={{diffContext}}
     - name: delta-side-by-side
       command: delta --dark --paging=never --line-numbers --side-by-side
     - name: delta-inline
