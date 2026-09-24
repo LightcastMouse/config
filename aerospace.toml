@@ -81,7 +81,7 @@ on-mode-changed = []
 [workspace-to-monitor-force-assignment]
 
 1 = 'Built-in Retina Display'
-2 = 'S34J55x'
+2 = ['S34J55x', 'Q27G3W8']
 3 = 'DELL P2418D'
 4 = 'S34J55x'
 5 = 'DELL P2418D'
