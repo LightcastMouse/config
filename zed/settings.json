@@ -58,7 +58,7 @@
   },
   // "excerpt_context_lines": 3,
   "ensure_final_newline_on_save": true,
-  "soft_wrap": "none",
+  "soft_wrap": "editor_width",
   "file_finder": {
     "include_ignored": "all",
     "modal_max_width": "large",
@@ -101,7 +101,7 @@
   "context_servers": {},
   "theme": {
     "mode": "dark",
-    "light": "Gruvbox Light",
+    "light": "Gruvbox Light Soft",
     "dark": "Ayu Mirage",
   },
   "experimental.theme_overrides": {
