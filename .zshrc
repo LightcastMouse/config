@@ -681,6 +681,8 @@ alias cdash='bash ~/.claude/scripts/fleet-dashboard.sh "$PWD" watch'
 ## nav
 # cd to ~/d
 alias d='cd ~/d'
+# open .zshrc in zed
+alias z='zed ~/.config/.zshrc'
 
 ## paths
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
