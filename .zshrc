@@ -664,6 +664,8 @@ fi
 ## claude
 # keep claude awake
 alias cc="caffeinate -s -i -u claude"
+# keep claude awake and resume
+alias ccr="caffeinate -s -i -u claude -r"
 # run claude
 alias c='claude'
 # claude with chrome
