@@ -1,3 +1,8 @@
+os:
+  edit: 'zed {{filename}}'
+  editAtLine: 'zed {{filename}}:{{line}}'
+  editAtLineAndWait: 'zed --wait {{filename}}:{{line}}'
+  open: 'zed {{filename}}'
 git:
   diffRenderers:
     # - name: difftastic-side-by-side
