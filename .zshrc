@@ -737,3 +737,23 @@ export CLICOLOR=1
 
 # Define colors for different types (directories, links, executables, etc.)
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+## postgres
+# list running postgres instances (port, pid, status, data dir) and each db with the client ports connected to it
+pgls() {
+  local pid port dir state
+  lsof -nP -a -iTCP -sTCP:LISTEN -c postgres 2>/dev/null | awk 'NR>1 {n=split($9,a,":"); print $2, a[n]}' | sort -u | while read -r pid port; do
+    dir=$(lsof -p "$pid" -a -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')
+    state=$(PGCONNECT_TIMEOUT=2 pg_isready -h localhost -p "$port" 2>/dev/null | sed 's/^[^-]*- //')
+    printf 'port %s  pid %s  [%s]  %s\n' "$port" "$pid" "${state:-unknown}" "$dir"
+    # client connections come from the process titles, so this works even when the server rejects new connections
+    ps -axo ppid,command | awk -v pp="$pid" '$1 == pp && $2 == "postgres:" && $4 !~ /^(checkpointer|background|walwriter|autovacuum|logical|io|archiver|stats|startup)/ && $3 !~ /^(logical|autovacuum|background|walwriter)$/ {
+      user=$3; db=$4; hp=$5
+      if (db == "" || hp == "") next
+      if (match(hp, /\([0-9]+\)/)) cp=substr(hp, RSTART+1, RLENGTH-2); else cp="local"
+      conns[db] = conns[db] " " cp
+      users[db] = user
+    } END { for (d in conns) printf "  %-45s user=%s client ports:%s\n", d, users[d], conns[d] }' | sort
+  done
+  command -v docker >/dev/null && docker ps --filter ancestor=postgres --format 'docker {{.Names}}\t{{.Ports}}' 2>/dev/null
+}
