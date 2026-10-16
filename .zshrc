@@ -556,7 +556,7 @@ alias rpg="~/d/tt/lab/db/setup-local-postgres.sh --reset"
 # # delete git branch
 # alias gbd='git branch -D'
 # lazygit
-alias lgit='lazygit'
+alias lg='lazygit'
 
 # create a git worktree in a sibling "<repo>-trees" dir and cd into it
 function worktree() {
