@@ -535,10 +535,6 @@ alias brdb='bun run db'
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
 # run TT tests
 alias tttest="DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun db && DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun test"
-# cd to tt repo
-alias tt='cd ~/d/tt/'
-# cd to tt-trees
-alias ttt='cd ~/d/tt-trees'
 # cleanup local pg
 alias cpg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
 # reset local pg
@@ -678,11 +674,33 @@ alias cr='claude remote-control'
 # claude fleet dashboard
 alias cdash='bash ~/.claude/scripts/fleet-dashboard.sh "$PWD" watch'
 
-## nav
-# cd to ~/d
-alias d='cd ~/d'
-# open .zshrc in zed
-alias z='zed ~/.config/.zshrc'
+## navigate to common dirs
+# o <name>  cd to a common dir; `o` alone lists the options
+function o() {
+  local -A dirs=(
+    config    ~/.config
+    claude    ~/.claude
+    d         ~/d
+    ai        ~/d/ai
+    jira      ~/d/better-jira
+    jiratrees ~/d/better-jira-trees
+    tt        ~/d/tt
+    tttrees   ~/d/tt-trees
+    skills    ~/.claude/skills
+    rich      ~/d/docs
+  )
+  local name="$1"
+  if [[ -z "$name" || -z "${dirs[$name]}" ]]; then
+    [[ -n "$name" ]] && echo "o: unknown destination '$name'" >&2
+    local k
+    for k in ${(ko)dirs}; do printf '  %-10s %s\n' "$k" "${dirs[$k]}"; done
+    [[ -n "$name" ]] && return 1 || return 0
+  fi
+  cd "${dirs[$name]}"
+}
+# tab-complete destination names
+_o() { compadd -- config claude d ai jira jiratrees tt tttrees hack hacktrees skills docs }
+(( $+functions[compdef] )) && compdef _o o
 
 ## paths
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
