@@ -535,10 +535,6 @@ alias brdb='bun run db'
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
 # run TT tests
 alias tttest="DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun db && DEV_DATA_PATH=.test DB_CONNECTION_STRING= DB_PROXY_CONNECTION_STRING= bun test"
-# cd to tt repo
-alias tt='cd ~/d/tt/'
-# cd to tt-trees
-alias ttt='cd ~/d/tt-trees'
 # cleanup local pg
 alias cpg="~/d/tt/lab/db/setup-local-postgres.sh --cleanup"
 # reset local pg
@@ -678,11 +674,83 @@ alias cr='claude remote-control'
 # claude fleet dashboard
 alias cdash='bash ~/.claude/scripts/fleet-dashboard.sh "$PWD" watch'
 
-## nav
-# cd to ~/d
-alias d='cd ~/d'
-# open .zshrc in zed
-alias z='zed ~/.config/.zshrc'
+## navigate to common dirs
+# cache every dir under ~ (non-hidden except the skip list, plus ~/.config and ~/.claude)
+# so `o` doesn't walk the disk on each call
+function _o_build() {
+  local -a skip=(Library Applications Movies Music Pictures Public Postman go)
+  local -a roots=()
+  local r
+  for r in ~/*(/N); do (( ${skip[(Ie)${r:t}]} )) || roots+=("$r"); done
+  roots+=(~/.config ~/.claude)
+  mkdir -p ~/.cache
+  find $roots -maxdepth 5 \( -name node_modules -o -name .git -o -name .cache -o -name dist -o -name build \) -prune -o -type d -print 2>/dev/null > ~/.cache/o-dirs.tmp
+  # find exits non-zero on unreadable dirs, so judge success by output instead
+  [[ -s ~/.cache/o-dirs.tmp ]] && mv ~/.cache/o-dirs.tmp ~/.cache/o-dirs
+}
+# print cached dirs named $1: exact basename matches if any, else case-insensitive partial; shortest path first
+function _o_search() {
+  [[ -s ~/.cache/o-dirs ]] || return 0
+  awk -v n="$1" '
+    BEGIN { ln = tolower(n) }
+    { b = $0; sub(/.*\//, "", b)
+      if (b == n) e[++ne] = $0
+      else if (index(tolower(b), ln)) p[++np] = $0 }
+    END { if (ne) for (i = 1; i <= ne; i++) print length(e[i]) "\t" e[i]
+          else for (i = 1; i <= np; i++) print length(p[i]) "\t" p[i] }
+  ' ~/.cache/o-dirs | sort -n | cut -f2- | while IFS= read -r d; do [[ -d $d ]] && print -r -- "$d"; done
+}
+# o <name>  cd to a common dir; `o` alone lists the options
+function o() {
+  local -A dirs=(
+    config    ~/.config
+    claude    ~/.claude
+    d         ~/d
+    ai        ~/d/ai
+    jira      ~/d/better-jira
+    tt        ~/d/tt
+    tttrees   ~/d/tt-trees
+    skills    ~/.claude/skills
+    rich      ~/d/rich
+  )
+  local name="$1"
+  if [[ -z "$name" ]]; then
+    local k
+    for k in ${(ko)dirs}; do printf '  %-10s %s\n' "$k" "${dirs[$k]}"; done
+    return 0
+  fi
+  if [[ -n "${dirs[$name]}" ]]; then
+    cd "${dirs[$name]}"
+    return
+  fi
+  # not a shortcut: look in the cached dir list (exact name, then partial match).
+  # a miss rebuilds the cache once and retries, so brand-new dirs are still found.
+  local cache=~/.cache/o-dirs
+  local -a hits
+  [[ -s $cache ]] || _o_build
+  hits=("${(@f)$(_o_search "$name")}")
+  hits=("${(@)hits:#}")
+  if (( ! ${#hits} )); then
+    _o_build
+    hits=("${(@f)$(_o_search "$name")}")
+    hits=("${(@)hits:#}")
+  fi
+  # refresh a day-old cache in the background for next time
+  local -a stale=(~/.cache/o-dirs(N.mh+24))
+  (( ${#stale} )) && { _o_build } &!
+  if (( ! ${#hits} )); then
+    echo "o: no directory matching '$name'" >&2
+    return 1
+  fi
+  if (( ${#hits} > 1 )); then
+    echo "o: ${#hits} matches, going to the shortest path:" >&2
+    printf '  %s\n' "${hits[@]:0:10}" >&2
+  fi
+  cd "${hits[1]}"
+}
+# tab-complete destination names
+_o() { compadd -- config claude d ai jira tt tttrees hack hacktrees skills rich }
+(( $+functions[compdef] )) && compdef _o o
 
 ## paths
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
