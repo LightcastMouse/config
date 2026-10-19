@@ -76,7 +76,7 @@ async function startDevServer(port: number): Promise<void> {
           ...process.env,
           // Used by /dev-login on branches that have it, to mint a session and set the cookie.
           DEV_AUTO_LOGIN_EMAIL:
-            process.env.DEV_AUTO_LOGIN_EMAIL ?? "admin-tt-dev@lightcast.io",
+            process.env.DEV_AUTO_LOGIN_EMAIL ?? "thomas.black@lightcast.io",
           APP_URL: `http://localhost:${port}`,
           PORT: String(port),
         },
