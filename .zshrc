@@ -709,12 +709,17 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
-if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-  source "$NVM_DIR/nvm.sh"
-fi
-if [[ -s "$NVM_DIR/bash_completion" ]]; then
-  source "$NVM_DIR/bash_completion"
-fi
+# nvm.sh costs over a second per shell, so load it on first use. Until then the newest installed
+# node (nvm's default alias) is put straight on PATH so scripts and tools still find it.
+_nvm_latest=($NVM_DIR/versions/node/*(N/n[-1]))
+[[ -n $_nvm_latest ]] && export PATH="$_nvm_latest/bin:$PATH"
+unset _nvm_latest
+_nvm_load() {
+  unset -f nvm _nvm_load
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+}
+nvm() { _nvm_load; nvm "$@"; }
 
 # Puppeteer / Chromium
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
