@@ -129,6 +129,7 @@ display_granularity = "tabs"
 view_mode = "compact"
 enabled = true
 tab_item_mode = "focused_session"
+hide_title_bar_search_bar = false
 
 [appearance.input]
 input_mode = "waterfall"
@@ -140,7 +141,7 @@ selected_system_themes = { dark = "dark", light = "light" }
 
 [appearance.tabs]
 show_indicators_button = true
-workspace_decoration_visibility = "on_hover"
+workspace_decoration_visibility = "always_show"
 tab_close_button_position = "left"
 
 [appearance.cursor]
