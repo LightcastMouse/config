@@ -1,0 +1,24 @@
+name: Cool Tabs
+background: '#15100d'
+foreground: '#f5ebe0'
+accent: '#ff8a1f'
+details: darker
+terminal_colors:
+  normal:
+    black: '#7b5cff'
+    red: '#ff1744'
+    green: '#9be12a'
+    yellow: '#ffa000'
+    blue: '#ff6a3d'
+    magenta: '#b620ff'
+    cyan: '#ffd23f'
+    white: '#ffffff'
+  bright:
+    black: '#a18bff'
+    red: '#ff5470'
+    green: '#bdf25c'
+    yellow: '#ffc247'
+    blue: '#ff9468'
+    magenta: '#d070ff'
+    cyan: '#ffe074'
+    white: '#ffffff'

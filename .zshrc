@@ -268,9 +268,23 @@ function freePort() {
 ## warp
 export WARP_DB="$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
 
+# tab color names available in the active warp theme (its terminal_colors.normal keys)
+function _warp_tab_colors() {
+  setopt local_options null_glob
+  local -a fallback=(black red green yellow blue magenta cyan white)
+  local theme file
+  theme=$(sed -n 's/^theme = "\(.*\)"/\1/p' "$HOME/.warp/settings.toml" 2>/dev/null | head -1)
+  for file in "$HOME"/.warp/themes/*.yaml; do
+    [[ -n $theme ]] && grep -qx "name: $theme" "$file" || continue
+    local -a found=(${(f)"$(awk '/^  normal:/{n=1;next} /^  bright:/{n=0} n && /^    [a-z]+:/{sub(/:.*/,"");gsub(/ /,"");print}' "$file")"})
+    (( $#found )) && { print -rl -- $found; return; }
+  done
+  print -rl -- $fallback
+}
+
 # open '<ticket> lgit', '<ticket> ai' and '<ticket> dev' tabs in the current window
 function warp-tabs() {
-  local -a valid_colors=(black red green yellow blue magenta cyan white)
+  local -a valid_colors=(${(f)"$(_warp_tab_colors)"})
   local usage="usage: warp-tabs [--color|-c ${(j:|:)valid_colors}] <ticket>"
   local color='' ticket=''
   while (( $# )); do
@@ -310,7 +324,7 @@ function warp-tabs() {
   # one color per ticket, stable across runs so a ticket's tabs stay recognizable,
   # unless overridden with --color
   if [[ -z $color ]]; then
-    local -a colors=(red green yellow blue magenta cyan)
+    local -a colors=(${valid_colors:#(black|white)})
     color=$colors[$(( $(print -rn -- "$slug" | cksum | cut -d' ' -f1) % $#colors + 1 ))]
   fi
 
