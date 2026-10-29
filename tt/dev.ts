@@ -2,6 +2,7 @@ import { createServer as createNetServer } from "node:net";
 import { spawn } from "node:child_process";
 import { basename } from "node:path";
 import { homedir } from "node:os";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 function canListen(port: number, host: string): Promise<boolean> {
@@ -100,9 +101,17 @@ async function startDevServer(port: number): Promise<void> {
   });
 }
 
+// `repro-up` sets TT_REPRO: record the port this server got, so `repro` can find it whatever port it ended up on.
+const reproPortFile = join(homedir(), ".cache/tt/repro-ports", basename(process.cwd()));
+
 async function main() {
   for (;;) {
     const port = await pickPort();
+
+    if (process.env.TT_REPRO) {
+      mkdirSync(join(reproPortFile, ".."), { recursive: true });
+      writeFileSync(reproPortFile, String(port));
+    }
 
     try {
       await startDevServer(port);
@@ -112,6 +121,8 @@ async function main() {
       console.log(
         `Port ${port} was taken before Vite started -> trying the next port`,
       );
+    } finally {
+      if (process.env.TT_REPRO) rmSync(reproPortFile, { force: true });
     }
   }
 }

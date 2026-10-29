@@ -544,6 +544,32 @@ alias brf='bun run fmt'
 # bun run db
 alias brdb='bun run db'
 
+## playwright repro
+# drop the old aliases of these names, or re-sourcing in a shell that still has them fails to parse the functions below
+unalias repro repro-up 2>/dev/null
+# terminal 1: start another `ttdev` server for the repro to drive (no autologin; it records its port, whatever it ends up on)
+repro-up() { TT_REPRO=1 TT_NO_AUTOLOGIN=1 ttdev; }
+# the port `repro-up` recorded for this worktree; override with REPRO_PORT
+repro-port() {
+  local f="$HOME/.cache/tt/repro-ports/$(basename "$PWD")"
+  local port
+  if [[ -n "$REPRO_PORT" ]]; then port="$REPRO_PORT"; elif [[ -f "$f" ]]; then port="$(cat "$f")"; else echo "no repro server: run repro-up in another terminal" >&2; return 1; fi
+  # a stale record (repro-up was killed hard) points at a port nothing listens on
+  if ! lsof -ti "tcp:$port" -sTCP:LISTEN >/dev/null 2>&1; then echo "nothing is listening on $port: run repro-up in another terminal" >&2; return 1; fi
+  echo "$port"
+}
+# terminal 2: reset the seed data (repro-db reset), then run the playwright repro script against that server.
+# --no-reset skips the reset; other args e.g. --headed pass through
+repro() {
+  local port reset=1 args=()
+  port="$(repro-port)" || return 1
+  for a in "$@"; do [[ "$a" == "--no-reset" ]] && reset=0 || args+=("$a"); done
+  if (( reset )); then repro-db reset || return 1; fi
+  bun ~/.agents/skills/repro-fix-findings/playwright/run.ts --reuse "$port" . "${args[@]}"
+}
+# put the DB back to the data it had at `repro-db snapshot` (no re-dump, no server restart)
+repro-db() { ~/.config/tt/repro-db.sh "$@"; }
+
 ## tt
 # run TT dev script
 alias ttdev='bun "$HOME/.config/tt/dev.ts"'
